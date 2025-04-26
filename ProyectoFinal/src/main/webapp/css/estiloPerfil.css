@@ -1,0 +1,614 @@
+body, html {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto; /* Permite el scroll vertical */
+}
+
+.imagenUsuPerfil {
+	font-family: 'Bangers';
+	text-align: center;
+	width: 85%;
+	height: 100%;
+	border: 1px solid black;
+	border-radius: 20px;
+	font-size: 24px;
+}
+
+.aliasPerfil {
+	font-family: "Bangers", sans-serif;
+	color: black;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+
+.encabezado {
+	margin-top: 5%;
+	width: 100%;
+	height: 20%;
+	display: flex;
+	align-items: start;
+}
+
+.columnaPrincipal {
+	height: 100%;
+}
+
+.columnaPrincipalB {
+	width: 100%;
+	height: 70%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.contenedorPrincipalPerfil {
+	height: 100%;
+	width: 100%;
+	border: 1px solid #01137ac2;
+	background-color: rgba(11, 17, 49, 0.6);
+	border-radius: 15px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	overflow-y: auto;
+}
+
+.contenedorMainPerfil {
+	width: 100%;
+	padding-bottom: 10px;
+	height: 80%;
+	overflow-y: auto;
+}
+
+.contenedorInfoPerfil {
+	background-color: rgb(206, 206, 206);
+	border: 1px solid black;
+	border-radius: 20px;
+	margin: 10px;
+	height: 100%;
+}
+
+.divImagenPerfil {
+	width: 50%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.divAliasPerfil {
+	width: 100%;
+	height: 100%;
+}
+
+.formularioAlias {
+	width: 50%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+}
+
+.formularioElementos {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+}
+
+.DatosPerfil {
+	font-family: "Bangers", sans-serif;
+	padding-left: 5%;
+	color: black;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	text-align: center;
+	justify-content: start;
+	align-items: center;
+}
+
+.DatosPerfilInfo {
+	font-family: "Bangers", sans-serif;
+	color: black;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	text-align: center;
+	justify-content: start;
+	align-items: center;
+	word-wrap: break-word;
+}
+
+.DatosPerfil2 {
+	font-family: "Bangers", sans-serif;
+	padding-left: 5%;
+	color: black;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	text-align: center;
+	justify-content: start;
+	align-items: center;
+}
+
+.DatosPerfilInfo2 {
+	font-family: "Bangers", sans-serif;
+	color: black;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	text-align: center;
+	justify-content: start;
+	align-items: center;
+	word-wrap: break-word;
+}
+
+.ContenedorDatosPerfil {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 20%;
+}
+
+.ContenedorDatosPerfilB {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 20%;
+}
+
+.ContenedorDatosPerfil2 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+
+.botonModificador {
+	border: none;
+	background: none;
+	cursor: pointer;
+}
+
+.botonModificador i {
+	color: black;
+	font-size: 24px;
+}
+
+.ValidarUsuario {
+	margin: 30px;
+	width: 120px;
+	text-align: center;
+}
+
+.ValidarUsuario {
+	width: 120px;
+	text-align: center;
+}
+
+.hacersePremiumBoton {
+	margin: 30px;
+	width: 120px;
+	text-align: center;
+}
+
+.ValidarUsuario2 {
+	margin: auto;
+	width: auto;
+	text-align: center;
+	font-size: 3vb;
+}
+
+.hacersePremiumBoton2 {
+	margin: auto;
+	width: auto;
+	text-align: center;
+	width: auto;
+	font-size: 3vb;
+}
+
+.botonSubir {
+	height: auto;
+	width: auto;
+	text-align: center;
+	font-size: 20px;
+}
+
+.contenedorDosPerfil {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	margin: 10px;
+}
+
+.contenedorInfoPerfilDerecho {
+	margin: 10px;
+}
+
+.contenedorInfoPerfilDerechoB {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	background-color: rgb(206, 206, 206);
+	border: 1px solid black;
+	border-radius: 20px;
+	height: 47%;
+	width: 100%;
+	text-align: center;
+}
+
+.NombreGrupoP, .categoriaGrupoP, .tematicaGrupoP {
+	font-size: 2.5vh;
+}
+
+.verGrupoP {
+	text-decoration: none;
+	color: black;
+	font-size: 2.5vh;
+	cursor: pointer;
+}
+
+.verGrupo2 {
+	text-decoration: none;
+	color: black;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.verGrupo2:hover {
+	color: rgb(255, 103, 15);
+}
+
+.verGrupoP:hover {
+	color: rgb(255, 103, 15);
+}
+
+.contenidoMensaje {
+	width: 50%;
+	height: 90%;
+	font-size: 22px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	font-family: 'Bangers';
+}
+
+.tiposMensaje {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.tiposMensaje button {
+	margin: 20px;
+	font-family: "Bangers", sans-serif;
+	border-radius: 10px;
+	width: auto;
+	background-color: white;
+	color: black;
+	border: 1px solid black;
+	cursor: pointer;
+	font-size: 22px;
+	transition: box-shadow 0.5s ease;
+}
+
+.tiposMensaje button:hover {
+	box-shadow: 5px 5px 15px rgb(255, 103, 15), -5px -5px 15px
+		rgb(255, 103, 15);
+}
+
+.contenedorGruposB {
+	width: 100%;
+	height: 90%;
+	margin-top: 50px;
+	border: 1px solid black;
+	background-color: rgb(206, 206, 206);
+	border-radius: 10px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	font-family: "Bangers", sans-serif;
+	font-size: 2.5vh;
+	word-wrap: break-word;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.formularioFoto {
+	background-color: transparent;
+	width: 100%;
+	height: 100%;
+	border: 1px solid black;
+	border-radius: 20px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.fotoUsu {
+	display: none; /* Oculta el input real */
+}
+
+.btn-file {
+	font-family: "Bangers", sans-serif;
+	width: 160px;
+	height: 40px;
+	border-radius: 10px;
+	background-color: transparent;
+	color: black;
+	border: 1px solid black;
+	cursor: pointer;
+	font-size: 20px;
+	transition: box-shadow 0.5s ease;
+}
+
+.ContenedorCompleto {
+	height: 75%;
+	width: 100%;
+}
+
+.divBoton {
+	margin: auto;
+}
+
+/* Contenedor del formulario modal */
+.manga-button {
+	background: white;
+	color: black;
+	font-family: "Bangers", sans-serif;
+	font-size: 26px;
+	font-weight: bold;
+	padding: 15px 30px;
+	border: 4px solid black;
+	border-radius: 15px;
+	cursor: pointer;
+	text-transform: uppercase;
+	position: relative;
+	width: 150px;
+	margin: 10px;
+	transition: all 0.3s ease-in-out;
+}
+
+.manga-button:hover {
+	background: black;
+	color: white;
+}
+
+/* Asegura que los botones se adapten en móviles */
+@media ( max-width : 600px) {
+	.manga-button {
+		width: 100%;
+		font-size: 20px;
+		padding: 12px;
+	}
+}
+
+/* ======== MODAL ========= */
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	overflow-y: auto;
+}
+
+/* Contenido del modal, unificado para ambos modales */
+.contenidoModal, .contenidoModal2 {
+	background-color: white;
+	border: 6px solid black;
+	padding: 30px;
+	width: 70%;
+	max-width: 600px;
+	text-align: center;
+	font-size: 20px;
+	box-shadow: 12px 12px 0px black;
+	position: relative;
+	transform: rotate(-2deg);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	border-radius: 10px;
+}
+
+/* En pantallas pequeñas, ajusta el modal */
+@media ( max-width : 768px) {
+	.contenidoModal, .contenidoModal2 {
+		width: 100%;
+		padding: 20px;
+		font-size: 18px;
+		transform: none;
+	}
+}
+
+/* Botón de cerrar */
+.close {
+	color: black;
+	font-size: 30px;
+	font-weight: bold;
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	cursor: pointer;
+	background: white;
+	padding: 6px;
+	border: 4px solid black;
+	box-shadow: 4px 4px 0px black;
+	transform: rotate(5deg);
+	transition: all 0.3s;
+}
+
+.close:hover {
+	background: red;
+	color: white;
+}
+
+/* Formulario en el modal */
+#formularioDatosModal, #formularioModificacionDatosModal,
+	#formularioModificacionGrupo, #formularioCreacionUsuario,
+	#formularioCreacionGrupo, #formularioCreacionComentario {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: center;
+	background: transparent;
+}
+
+#formularioCreacionUsuario, #formularioCreacionGrupo,
+	#formularioCreacionComentario {
+	gap: 5px;
+}
+
+/* Etiquetas de ambos formularios */
+#formularioDatosModal label, #formularioModificacionDatosModal label,
+	#formularioModificacionGrupo label, #formularioCreacionUsuario label,
+	#formularioCreacionGrupo label, #formularioCreacionComentario label {
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Inputs para ambos formularios */
+#formularioDatosModal input, #formularioModificacionDatosModal input,
+	#formularioModificacionGrupo input, #formularioModificacionGrupo select,
+	#formularioCreacionUsuario input, #formularioCreacionUsuario select,
+	#formularioCreacionGrupo input, #formularioCreacionGrupo select,
+	#formularioCreacionComentario input, #formularioCreacionComentario select,
+	#formularioCreacionComentario textarea {
+	padding: 10px;
+	border: 3px solid black;
+	font-size: 18px;
+	text-align: center;
+	width: 100%;
+	color: black;
+	max-width: 400px;
+}
+
+/* Ajuste responsivo en móviles */
+@media ( max-width : 600px) {
+	#formularioDatosModal label, #formularioModificacionDatosModal label,
+		#formularioModificacionGrupo label, #formularioCreacionUsuario label,
+		#formularioCreacionGrupo label, #formularioCreacionComentario label {
+		font-size: 18px;
+	}
+	#formularioDatosModal input, #formularioModificacionDatosModal input,
+		#formularioModificacionGrupo input, #formularioModificacionGrupo select,
+		#formularioCreacionUsuario input, #formularioCreacionUsuario select,
+		#formularioCreacionGrupo input, #formularioCreacionGrupo select,
+		#formularioCreacionComentario input, #formularioCreacionComentario select,
+		#formularioCreacionComentario textarea {
+		font-size: 16px;
+		padding: 8px;
+	}
+	#formularioDatosModal, #formularioModificacionDatosModal,
+		#formularioModificacionGrupo, #formularioCreacionUsuario,
+		#formularioCreacionGrupo, #formularioCreacionComentario {
+		gap: 0;
+	}
+}
+
+/* ======== ALERTA PERSONALIZADA ========= */
+.alerta-personalizada {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	width: 100%;
+	pointer-events: none;
+}
+
+.alerta-contenido {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: white;
+	border: 4px solid black;
+	padding: 20px 40px;
+	text-align: center;
+	font-family: "Bangers", sans-serif;
+	box-shadow: 8px 8px 0px black;
+	pointer-events: auto;
+	border-radius: 20px;
+	max-width: 80%;
+}
+
+.alerta-contenido p {
+	font-size: 22px;
+	margin-bottom: 20px;
+	color: black;
+}
+
+.alerta-contenido button {
+	background: white;
+	color: black;
+	border: 4px solid black;
+	font-family: "Bangers", sans-serif;
+	font-size: 22px;
+	padding: 10px 20px;
+	cursor: pointer;
+	text-transform: uppercase;
+	transition: all 0.3s;
+}
+
+/* Ajustes para móviles */
+@media ( max-width : 600px) {
+	.alerta-contenido {
+		width: 90%;
+		padding: 15px;
+		font-size: 18px;
+	}
+	.alerta-contenido p {
+		font-size: 18px;
+	}
+	.alerta-contenido button {
+		font-size: 18px;
+		padding: 8px 16px;
+	}
+}
+
+.foto-input-container {
+	position: relative;
+	margin-bottom: 10px;
+}
+
+#fotoActual {
+	border: 1px solid #ccc; /* Estilo para la imagen */
+	border-radius: 4px; /* Bordes redondeados */
+	margin-bottom: 10px; /* Espaciado */
+}
+
+.descripcionGrupoNuevo {
+	padding: 10px;
+	border: 3px solid black;
+	font-size: 18px;
+	text-align: center;
+	width: 100%;
+	color: black;
+	max-width: 400px;
+}
