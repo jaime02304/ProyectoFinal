@@ -46,8 +46,9 @@
 				</div>
 				<!-- Columna de los botones (a la derecha) -->
 				<div class="boton-contenedor">
-					<a href="#"><button class="botonNavegador botonGrupo">GRUPOS</button></a>
-					<a href="<%=request.getContextPath()%>/ComentarioPagina"
+					<a href="<%=request.getContextPath()%>/PaginaGrupo"><button
+							class="botonNavegador botonGrupo">GRUPOS</button></a> <a
+						href="<%=request.getContextPath()%>/ComentarioPagina"
 						class="d-xl-block d-none"><button
 							class="botonNavegador botonAnime">ANIMES</button></a> <a
 						href="<%=request.getContextPath()%>/ComentarioPagina"
@@ -96,7 +97,7 @@
 						<i class="fa-solid fa-bars"></i>
 					</button>
 					<div class="menu-desplegable" id="menuOpciones">
-						<a href="#">GRUPOS</a> <a
+						<a href="<%=request.getContextPath()%>/PaginaGrupo">GRUPOS</a> <a
 							href="<%=request.getContextPath()%>/ComentarioPagina">COMENTARIOS</a>
 						<!--AQUI DEBERIA DE PONER LA CONDICION EN LA CUAL SI SE INICIA SESION PONDRA PERFIL USUARIO O PERFIL ADMINISTRADOR-->
 						<c:if test="${Usuario == null}">
@@ -388,7 +389,7 @@
 		<c:if test="${not empty infoVerificacion}">
 			<div id="alertaPersonalizada" class="alerta-personalizada">
 				<div class="alerta-contenido">
-					<p id="alertaMensaje"> ${infoVerificacion}</p>
+					<p id="alertaMensaje">${infoVerificacion}</p>
 					<button onclick="cerrarAlertaPersonalizada()">Aceptar</button>
 				</div>
 			</div>

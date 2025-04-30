@@ -255,6 +255,7 @@ public class PerfilServicio {
 					grupo.setNombreGrupo(jsonGrupo.optString("nombreGrupo"));
 					grupo.setCategoriaNombre(jsonGrupo.optString("categoriaNombre"));
 					grupo.setSubCategoriaNombre(jsonGrupo.optString("subCategoriaNombre"));
+					grupo.setDescripcionGrupo(jsonGrupo.optString("descripcionGrupo"));
 
 					listaGrupos.add(grupo);
 				}

@@ -303,7 +303,7 @@ function enviarDatosAlServidorM(formData) {
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 //Abrir modal para la modificacion de grupos
-function openModificacionGrupoModal(id, nombreGrupo, categoria, subcategoria) {
+function openModificacionGrupoModal(id, nombreGrupo, categoria, subcategoria, descripcion) {
 	// Cacheamos el modal del DOM y lo mostramos
 	const modal = document.getElementById("formularioModificacionGrupoModal");
 	modal.style.display = "flex";
@@ -312,6 +312,7 @@ function openModificacionGrupoModal(id, nombreGrupo, categoria, subcategoria) {
 	document.getElementById("idGrupo").value = id;
 	document.getElementById("nombreGrupo").value = nombreGrupo;
 	document.getElementById("categoriaGrupo").value = categoria;
+	document.getElementById("descripcionGrupo").value = descripcion
 
 	// Actualizar subcategorías según la categoría seleccionada
 	actualizarSubcategoriasGM();
@@ -370,6 +371,7 @@ function enviarModificacionGrupo(event) {
 	const nombreGrupo = document.getElementById("nombreGrupo").value;
 	const categoriaGrupo = document.getElementById("categoriaGrupo").value;
 	const subCategoriaGrupo = document.getElementById("subCategoriaGrupo").value;
+	const descripcionGrupo = document.getElementById("descripcionGrupo").value;
 	console.log(subCategoriaGrupo);
 
 	// Crear objeto FormData para enviar los datos
@@ -378,6 +380,7 @@ function enviarModificacionGrupo(event) {
 	formData.append("nombreGrupo", nombreGrupo);
 	formData.append("categoriaNombre", categoriaGrupo);
 	formData.append("subCategoriaNombre", subCategoriaGrupo);
+	formData.append("descripcionGrupo", descripcionGrupo)
 
 	// Obtener el contexto de la aplicación
 	const contextPath = window.location.pathname.split('/')[1];

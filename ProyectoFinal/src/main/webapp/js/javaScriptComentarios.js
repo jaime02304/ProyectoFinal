@@ -81,7 +81,7 @@ function cerrarAlertaPersonalizada() {
 function openCreacionComentarioModal(primerComentario) {
 	const modal = document.getElementById("formularioCreacionComentarioModal");
 	modal.style.display = "flex";
-	document.getElementById("categoriaComentarioNuevo").value = "auxiliar"; // Establecer valor por defecto
+	document.getElementById("categoriaComentarioNuevo").value = "auxiliar";
 	actualizarSubcategoriasCreacionComM();
 
 	const contenidoComentario = document.getElementById("contenidoComentarioNuevo");
@@ -89,21 +89,17 @@ function openCreacionComentarioModal(primerComentario) {
 	const subCategoriaSelect = document.getElementById("subCategoriaComentarioNuevo");
 
 	if (primerComentario) {
-		// Cargar automáticamente el comentario de bienvenida
-		categoriaSelect.disabled = true;  // Deshabilitar categoría si es comentario de bienvenida
-		subCategoriaSelect.disabled = true; // Deshabilitar subcategoría
+		categoriaSelect.disabled = true;
+		subCategoriaSelect.disabled = true;
 	} else {
-		// Habilitar el formulario de categorías y subcategorías si ya tiene un comentario
 		categoriaSelect.disabled = false;
 		subCategoriaSelect.disabled = false;
 	}
 }
-// Función para cerrar el modal de creación de comentarios
 function closeCreacionComentarioModal() {
 	document.getElementById("formularioCreacionComentarioModal").style.display = "none";
 }
 
-// Función para actualizar dinámicamente las subcategorías
 function actualizarSubcategoriasCreacionComM() {
 	const categoria = document.getElementById("categoriaComentarioNuevo").value;
 	const subCategoriaSelect = document.getElementById("subCategoriaComentarioNuevo");
@@ -133,7 +129,6 @@ function actualizarSubcategoriasCreacionComM() {
 	});
 }
 
-// Función para enviar el comentario
 function enviarCreacionComentario(event) {
 	event.preventDefault();
 	const contenidoComentario = document.getElementById("contenidoComentarioNuevo").value;
@@ -192,23 +187,19 @@ function filterComments() {
 	});
 }
 
-// Handler de click en categorías (desktop)
 buttons.forEach(btn => {
 	btn.addEventListener("click", () => {
 		const target = btn.dataset.target;
-		// Si clicas la misma, desactivas todo
 		if (currentCat === target) {
 			currentCat = null;
 			currentSub = null;
 			buttons.forEach(b => b.classList.remove("active"));
 			subcatsAll.forEach(s => s.classList.remove("active"));
 		} else {
-			// Si es nueva categoría, activas solo esa
 			currentCat = target;
 			currentSub = null;
 			buttons.forEach(b => b.classList.toggle("active", b === btn));
 			subcatsAll.forEach(s => s.classList.toggle("active", s.id === target));
-			// además, desactiva cualquier sub-boton activo
 			document.querySelectorAll(`[data-sub].active`).forEach(x => x.classList.remove("active"));
 		}
 		filterComments();
@@ -232,21 +223,18 @@ subcatsAll.forEach(section => {
 });
 
 
-// Cuando cambias categoría en móvil, si vuelves a seleccionar la misma, la desactivas
 categoriaFiltro.addEventListener("change", () => {
 	if (currentCat === categoriaFiltro.value) {
-		categoriaFiltro.value = "";   // forzamos “no selección”
+		categoriaFiltro.value = "";
 		currentCat = null;
 	} else {
 		currentCat = categoriaFiltro.value;
 	}
-	// reset sub siempre que cambie categoría
 	currentSub = null;
 	actualizarSubcategoriasFiltro();
 	filtrarMobile();
 });
 
-// Subcategoría móvil
 subcategoriaFiltro.addEventListener("change", () => {
 	if (currentSub === subcategoriaFiltro.value) {
 		subcategoriaFiltro.value = "";
@@ -275,6 +263,5 @@ function filtrarMobile() {
 	});
 }
 
-// Al cargar la página
 filterComments();
 filtrarMobile();

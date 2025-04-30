@@ -7,30 +7,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
-import edu.ProyectoFinal.servicios.ComentariosServicios;
+import edu.ProyectoFinal.servicios.GruposServicios;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Pagina controladora de la parte de los comentarios
- * 
- * @author jpribio - 30/04/25
- */
 @Controller
-public class ComentariosControlador {
+public class GrupoControlador {
+	private static final SesionLogger logger = new SesionLogger(GrupoControlador.class);
 
-	private static final SesionLogger logger = new SesionLogger(ComentariosControlador.class);
+	GruposServicios servicioDeGrupos = new GruposServicios();
 
-	ComentariosServicios servicioComentarios = new ComentariosServicios();
-
-	/**
-	 * Metodo para mostrar la pagina de comentarios al completo
-	 * 
-	 * @author jpribio - 30/04/25
-	 * @param sesionIniciada
-	 * @return
-	 */
-	@GetMapping("/ComentarioPagina")
-	public ModelAndView vistaPaginaPerfil(HttpSession sesionIniciada, RedirectAttributes redirectAttrs) {
+	@GetMapping("/PaginaGrupo")
+	public ModelAndView PaginaComentario(HttpSession sesionIniciada, RedirectAttributes redirectAttrs) {
 		try {
 			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
 			if (sesionIniciada == null || usuario == null) {
@@ -45,19 +32,17 @@ public class ComentariosControlador {
 						"No se ha detectado un usuario verificado. Por favor, debe de verificarse antes de continuar.");
 				return vista;
 			}
-
 			logger.info("Cargando la vista de comenatarios");
 			ModelAndView vista = new ModelAndView();
-			vista = servicioComentarios.recogidaDeComentarios(sesionIniciada);
-			vista.setViewName("ComentarioPagina");
+			vista = servicioDeGrupos.recogidaDeGrupos(sesionIniciada);
+			vista.setViewName("GrupoPagina");
 			return vista;
 		} catch (Exception e) {
 			logger.error("Error al cargar la página de comentarios\n" + e);
-			ModelAndView vista = new ModelAndView("ComentarioPagina");
+			ModelAndView vista = new ModelAndView("GrupoPagina");
 			vista.addObject("error", "Error al cargar la comentarios.");
 			vista.setViewName("error");
 			return vista;
 		}
 	}
-
 }

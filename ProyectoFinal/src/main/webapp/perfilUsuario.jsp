@@ -202,7 +202,7 @@
 														<td class="NombreGrupo"><c:out
 																value="${grupo.nombreGrupo}" /></td>
 														<td><a class="verGrupo2"
-															onclick="openModificacionGrupoModal('${grupo.idGrupo}', '${grupo.nombreGrupo}', '${grupo.categoriaNombre}', '${grupo.subCategoriaNombre}')">
+															onclick="openModificacionGrupoModal('${grupo.idGrupo}', '${grupo.nombreGrupo}', '${grupo.categoriaNombre}', '${grupo.subCategoriaNombre}', '${grupo.descripcionGrupo}')">
 																Modificar </a> <a class="verGrupo2"
 															onclick="openEliminacionModal('${grupo.idGrupo}', '${grupo.nombreGrupo}', ${false})">
 																Borrar </a></td>
@@ -503,7 +503,7 @@
 													<td class="NombreGrupo"><c:out
 															value="${grupo.nombreGrupo}" /></td>
 													<td><a class="verGrupo2"
-														onclick="openModificacionGrupoModal('${grupo.idGrupo}', '${grupo.nombreGrupo}', '${grupo.categoriaNombre}', '${grupo.subCategoriaNombre}')">
+														onclick="openModificacionGrupoModal('${grupo.idGrupo}', '${grupo.nombreGrupo}', '${grupo.categoriaNombre}', '${grupo.subCategoriaNombre}', '${grupo.descripcionGrupo}')">
 															Modificar </a> <a class="verGrupo2"
 														onclick="openEliminacionModal('${grupo.idGrupo}', '${grupo.nombreGrupo}', ${false})">
 															Borrar </a></td>
@@ -957,6 +957,14 @@
 							id="subCategoriaGrupo" name="subCategoriaGrupo">
 							<!-- Las opciones se llenarán dinámicamente con JavaScript -->
 						</select>
+					</div>
+
+					<div>
+						<label for="descripcionGrupo">Descripción</label>
+						<textarea id="descripcionGrupo" name="descripcionGrupo"
+							class="descripcionGrupoNuevo"
+							placeholder="Escribe una descripción breve para tu grupo"
+							rows="4" cols="50"></textarea>
 					</div>
 
 					<div>
