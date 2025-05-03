@@ -34,6 +34,8 @@
 	rel="stylesheet" />
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
 <body
@@ -191,8 +193,16 @@
 										<table class="tablaGrupos" style="width: 100%;">
 											<thead>
 												<tr class="trozoGrupo encabezado" style="height: auto;">
-													<th class="NombreGrupo" style="font-weight: lighter;">Nombre</th>
+													<th class="NombreGrupo" style="font-weight: lighter;">Nombre
+														<div>
+															<input id="filtroAdminGrupos" type="text"
+																placeholder="Filtrar…" style="height: 30%;" /> <i
+																class="fas fa-times" id="clearFiltroAdmin"
+																style="cursor: pointer; color: red; display: none;"></i>
+														</div>
+													</th>
 													<th style="font-weight: lighter;">Acciones</th>
+
 												</tr>
 											</thead>
 											<tbody
@@ -257,7 +267,7 @@
 								<c:choose>
 									<c:when test="${empty listadoUsuariosAdmin}">
 										<div class="mensajeGrupo">
-											<c:out value="No se encontraron grupos disponibles." />
+											<c:out value="No se encontraron usuarios disponibles." />
 										</div>
 										<div class="tiposMensaje">
 											<button onclick="openCreacionUsuarioModal()">Crear
@@ -269,7 +279,13 @@
 											<thead>
 												<tr class="trozoGrupo encabezado" style="height: auto;">
 													<th class="NombreGrupo"
-														style="font-weight: lighter; padding-right: 15px; width: 40%;">Alias</th>
+														style="font-weight: lighter; padding-right: 15px; width: 40%; position: relative;">Alias
+														<div class="input-contenedor">
+															<input id="filtroUsuariosAdmin" type="text"
+																placeholder="Filtrar alias…" /> <i class="fas fa-times"
+																id="clearFiltroUsuariosAdmin" title="Limpiar"></i>
+														</div>
+													</th>
 													<th class="NombreGrupo"
 														style="font-weight: lighter; padding-right: 15px; width: 40%; text-align: left;">Rol</th>
 													<th
@@ -316,11 +332,18 @@
 										</div>
 									</c:when>
 									<c:otherwise>
-										<table class="tablaUsuarios" style="width: 100%;">
+										<table class="tablaUsuarios tablaUsuariosSAdmin"
+											style="width: 100%;">
 											<thead>
 												<tr class="trozoGrupo encabezado" style="height: auto;">
 													<th class="NombreGrupo"
-														style="font-weight: lighter; padding-right: 15px; width: 40%;">Alias</th>
+														style="font-weight: lighter; padding-right: 15px; width: 40%; position: relative;">Alias
+														<div class="input-contenedor-sadmin">
+															<input id="filtroUsuariosSAdmin" type="text"
+																placeholder="Filtrar alias…" /> <i class="fas fa-times"
+																id="clearFiltroUsuariosSAdmin" title="Limpiar"></i>
+														</div>
+													</th>
 													<th class="NombreGrupo"
 														style="font-weight: lighter; padding-right: 15px; width: 40%; text-align: left;">Rol</th>
 													<th
@@ -489,10 +512,18 @@
 									</div>
 								</c:when>
 								<c:otherwise>
-									<table class="tablaGrupos" style="width: 100%;">
+									<table class="tablaGrupos tablaGruposMobile"
+										style="width: 100%;">
 										<thead>
 											<tr class="trozoGrupo encabezado" style="height: auto;">
-												<th class="NombreGrupo" style="font-weight: lighter;">Nombre</th>
+												<th class="NombreGrupo"
+													style="font-weight: lighter; position: relative;">Nombre
+													<div class="input-contenedor">
+														<input id="filtroAdminGruposMobile" type="text"
+															placeholder="Filtrar…" /> <i class="fas fa-times"
+															id="clearFiltroAdminMobile" title="Limpiar"></i>
+													</div>
+												</th>
 												<th style="font-weight: lighter;">Acciones</th>
 											</tr>
 										</thead>
@@ -564,11 +595,18 @@
 									</div>
 								</c:when>
 								<c:otherwise>
-									<table class="tablaUsuarios" style="width: 100%;">
+									<table class="tablaUsuarios tablaUsuariosMobile"
+										style="width: 100%;">
 										<thead>
 											<tr class="trozoGrupo encabezado" style="height: auto;">
 												<th class="NombreGrupo"
-													style="font-weight: lighter; padding-right: 15px; width: 40%;">Alias</th>
+													style="font-weight: lighter; padding-right: 15px; width: 40%;">Alias
+													<div class="input-contenedor-mobile">
+														<input id="filtroUsuariosAdminMobile" type="text"
+															placeholder="Filtrar alias…" /> <i class="fas fa-times"
+															id="clearFiltroUsuariosAdminMobile" title="Limpiar"></i>
+													</div>
+												</th>
 												<th class="NombreGrupo"
 													style="font-weight: lighter; padding-right: 15px; width: 40%; text-align: left;">Rol</th>
 												<th
@@ -615,11 +653,18 @@
 									</div>
 								</c:when>
 								<c:otherwise>
-									<table class="tablaUsuarios" style="width: 100%;">
+									<table class="tablaUsuarios tablaUsuariosSAdminMobile"
+										style="width: 100%;">
 										<thead>
 											<tr class="trozoGrupo encabezado" style="height: auto;">
 												<th class="NombreGrupo"
-													style="font-weight: lighter; padding-right: 15px; width: 40%;">Alias</th>
+													style="font-weight: lighter; padding-right: 15px; width: 40%; position: relative;">Alias
+													<div class="input-contenedor-sadmin-mobile">
+														<input id="filtroUsuariosSAdminMobile" type="text"
+															placeholder="Filtrar alias…" /> <i class="fas fa-times"
+															id="clearFiltroUsuariosSAdminMobile" title="Limpiar"></i>
+													</div>
+												</th>
 												<th class="NombreGrupo"
 													style="font-weight: lighter; padding-right: 15px; width: 40%; text-align: left;">Rol</th>
 												<th

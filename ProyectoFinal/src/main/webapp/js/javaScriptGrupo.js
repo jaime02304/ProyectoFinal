@@ -274,3 +274,121 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll('.trozoPaginaGrupoInfo').forEach(container => {
+		const abrir = container.querySelector('.abrir-search');
+		const cerrar = container.querySelector('.cerrar-search');
+		const input = container.querySelector('.search-inputInfo');
+
+		// abrir al hacer click en la lupa
+		abrir.addEventListener('click', () => {
+			container.classList.add('active');
+			input.focus();
+		});
+
+		// cerrar al hacer click en la X
+		cerrar.addEventListener('click', () => {
+			container.classList.remove('active');
+			input.value = '';
+		});
+
+		// opcional: cerrar si se hace clic fuera
+		document.addEventListener('click', e => {
+			if (!container.contains(e.target)) {
+				container.classList.remove('active');
+			}
+		});
+	});
+});
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+document.addEventListener('DOMContentLoaded', function() {
+	// apuntamos al contenedor “desktop”
+	const container = document.querySelector('.contenedorGrupo .trozoPaginaGrupoInfo');
+	const abrir = container.querySelector('.abrir-search');
+	const cerrar = container.querySelector('.cerrar-search');
+	const input = container.querySelector('.search-inputInfo');
+
+	// todos los ítems a filtrar
+	const grupos = Array.from(document.querySelectorAll('.contenedorGrupo .trozoPaginaGrupo'));
+
+	// abrir input
+	abrir.addEventListener('click', () => {
+		container.classList.add('active');
+		input.focus();
+	});
+
+	// cerrar input y resetear filtro
+	cerrar.addEventListener('click', () => {
+		container.classList.remove('active');
+		input.value = '';
+		grupos.forEach(g => g.style.display = '');
+	});
+
+	// filtro en tiempo real
+	input.addEventListener('input', () => {
+		const txt = input.value.trim().toLowerCase();
+		grupos.forEach(div => {
+			const nombre = div.querySelector('.nombrePaginaGrupo')
+				.textContent.trim().toLowerCase();
+			div.style.display = nombre.startsWith(txt) ? '' : 'none';
+		});
+	});
+
+	// cerrar si clicas fuera
+	document.addEventListener('click', e => {
+		if (!container.contains(e.target)) {
+			container.classList.remove('active');
+		}
+	});
+});
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+document.addEventListener('DOMContentLoaded', function() {
+	const container = document.querySelector('.contenedorGrupo2 .trozoPaginaGrupoInfo');
+	const abrir = container.querySelector('.abrir-search');
+	const cerrar = container.querySelector('.cerrar-search');
+	const input = container.querySelector('#filtroGrupos');
+
+	// todos los grupos bajo este contenedor
+	const grupos = Array.from(document.querySelectorAll('.contenedorGrupo2 .trozoPaginaGrupo'));
+
+	// abrir búsqueda
+	abrir.addEventListener('click', () => {
+		container.classList.add('active');
+		input.focus();
+	});
+
+	// cerrar búsqueda
+	cerrar.addEventListener('click', () => {
+		container.classList.remove('active');
+		input.value = '';
+		// restaurar todos
+		grupos.forEach(g => g.style.display = '');
+	});
+
+	// filtrar al teclear
+	input.addEventListener('input', () => {
+		const txt = input.value.trim().toLowerCase();
+		grupos.forEach(div => {
+			const nombre = div.querySelector('.nombrePaginaGrupo').textContent.trim().toLowerCase();
+			div.style.display = nombre.startsWith(txt) ? '' : 'none';
+		});
+	});
+
+	// cerrar si tocan fuera del área de búsqueda
+	document.addEventListener('click', e => {
+		if (!container.contains(e.target)) {
+			container.classList.remove('active');
+		}
+	});
+});

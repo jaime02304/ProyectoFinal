@@ -211,21 +211,21 @@
 }
 
 .trozoPaginaGrupo {
-    font-size: 4vw;
-    padding: 10px;
-    margin-top: 15px;
-    background-color: white;
-    display: flex;
-    flex: 1;
-    color: black;
-    font-family: "Bangers", sans-serif;
-    width: 90%;
-    max-height: 20%;
-    border: 1px solid black;
-    border-radius: 10px;
-    position: relative;
-    align-items: center;
-    justify-content: space-evenly;
+	font-size: 4vw;
+	padding: 10px;
+	margin-top: 15px;
+	background-color: white;
+	display: flex;
+	flex: 1;
+	color: black;
+	font-family: "Bangers", sans-serif;
+	width: 90%;
+	max-height: 20%;
+	border: 1px solid black;
+	border-radius: 10px;
+	position: relative;
+	align-items: center;
+	justify-content: space-evenly;
 }
 
 .verPaginaGrupo {
@@ -264,7 +264,7 @@
 	width: 40%;
 	height: auto;
 	background: white;
-	border: 1px solid #ccc;
+	border: 2px solid black;
 	border-radius: 6px;
 	padding: 8px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -276,8 +276,127 @@
 	display: block;
 }
 
+.fa-search {
+	cursor: pointer;
+	transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.fa-search:hover {
+	color: rgb(255, 103, 15);
+	text-shadow: 0px 0px 5px rgba(255, 103, 15, 0.5);
+}
+
 /* animación oleada */
 @keyframes olaPalpitante {
     0%, 100% { color: black; }
     50% { color: rgb(255, 103, 15); text-shadow: 0px 0px 5px rgba(255, 103, 15, 0.5); }
+}
+
+.trozoPaginaGrupoInfo {
+	font-size: 4vw;
+	padding: 10px;
+	margin-top: 15px;
+	background-color: white;
+	display: flex;
+	flex: 1;
+	color: black;
+	font-family: "Bangers", sans-serif;
+	width: 90%;
+	max-height: 20%;
+	border: 1px solid black;
+	border-radius: 10px;
+	position: relative;
+	align-items: center;
+	justify-content: space-evenly;
+	padding: 1rem;
+}
+
+/* posicionamos la lupa */
+.trozoPaginaGrupoInfo .abrir-search {
+	cursor: pointer;
+	z-index: 5;
+}
+
+/* input oculto por defecto */
+.trozoPaginaGrupoInfo .search-inputInfo {
+	position: absolute;
+	left: 0;
+	width: 100%; 
+	height:100%;
+	box-sizing: border-box;
+	padding: .5rem 1rem;
+	font-size: 2rem;
+	border: 1px solid #888;
+	border-radius: 5px;
+	background: white;
+	display: none;
+	z-index: 10;
+	color: black;
+}
+
+.trozoPaginaGrupoInfo .cerrar-search {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	font-size: 1.2rem;
+	color: red;
+	cursor: pointer;
+	display: none;
+	z-index: 11;
+}
+
+.trozoPaginaGrupoInfo.active .search-inputInfo {
+	display: block;
+}
+
+.trozoPaginaGrupoInfo.active .cerrar-search {
+	display: block;
+}
+
+.verPaginaGrupoInfo {
+	font-size: 4vw;
+	text-decoration: none;
+	color: black;
+	animation: olaPalpitante 2s ease-in-out infinite;
+	animation-delay: calc(var(--i)* 0.3s);
+}
+
+@media ( min-width : 768px) {
+	.trozoPaginaGrupoInfo {
+		font-size: 3vw;
+	}
+	.verPaginaGrupoInfo {
+		font-size: 3vw;
+	}
+}
+
+@media ( min-width : 1200px) {
+	.trozoPaginaGrupoInfo {
+		font-size: 1.5vw;
+	}
+	.verPaginaGrupoInfo {
+		font-size: 1.5vw;
+	}
+}
+
+/* oculto por defecto */
+.descripcionPaginaGrupoInfo {
+	display: none;
+	font-size: smaller;
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	width: 40%;
+	height: auto;
+	background: white;
+	border: 2px solid black;
+	border-radius: 6px;
+	padding: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	z-index: 10;
+}
+
+/* clase que mostrará el popup */
+.descripcionPaginaGrupoInfo.show {
+	display: block;
 }

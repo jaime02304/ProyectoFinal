@@ -37,6 +37,8 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
 	rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body
 	style="	background:
@@ -163,6 +165,15 @@
 					</div>
 				</div>
 				<div class="contenedorGrupo">
+					<div class="trozoPaginaGrupoInfo">
+						<div class="nombrePaginaGrupoInfo">Nombre</div>
+						<div class="categoriaPaginaGrupoInfo">Categoría</div>
+						<div class="tematicaPaginaGrupoInfo">Subcategoría</div>
+						<i class="fas fa-search abrir-search"></i> <input
+							id="filtroGrupos" type="text" class="search-inputInfo"
+							placeholder="Buscar..."> <i
+							class="fas fa-times cerrar-search"></i>
+					</div>
 					<c:forEach var="grupo" items="${listadoGruposTotales}">
 						<div class="trozoPaginaGrupo" style="--i: ${st.index}"
 							data-categoria="${grupo.categoriaNombre}"
@@ -214,6 +225,15 @@
 					</div>
 				</div>
 				<div class="contenedorGrupo2">
+					<div class="trozoPaginaGrupoInfo">
+						<div class="nombrePaginaGrupoInfo">Nombre</div>
+						<div class="categoriaPaginaGrupoInfo">Categoría</div>
+						<div class="tematicaPaginaGrupoInfo">Subcategoría</div>
+						<i class="fas fa-search abrir-search"></i> <input
+							id="filtroGrupos" type="text" class="search-inputInfo"
+							placeholder="Buscar..."> <i
+							class="fas fa-times cerrar-search"></i>
+					</div>
 					<c:forEach var="grupo" items="${listadoGruposTotales}">
 						<div class="trozoPaginaGrupo" style="--i: ${st.index}"
 							data-categoria="${grupo.categoriaNombre}"
@@ -289,7 +309,7 @@
 		<div id="alertaPersonalizada" class="alerta-personalizada">
 			<div class="alerta-contenido">
 				<p id="alertaMensaje"></p>
-				<button onclick="cerrarAlertaPersonalizada()">Aceptar</button>
+				<button onclick="cerrarAlerta()">Aceptar</button>
 			</div>
 		</div>
 	</main>

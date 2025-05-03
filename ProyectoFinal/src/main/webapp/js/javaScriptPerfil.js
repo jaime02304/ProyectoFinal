@@ -677,3 +677,251 @@ function enviarCreacionComentario(event) {
 			mostrarAlertaPersonalizada("Ocurrió un error inesperado.");
 		});
 }
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+document.addEventListener('DOMContentLoaded', function() {
+	const desktopInput = document.getElementById('filtroAdminGrupos');
+	const desktopClear = document.getElementById('clearFiltroAdmin');
+	const mobileInput = document.getElementById('filtroAdminGruposMobile');
+	const mobileClear = document.getElementById('clearFiltroAdminMobile');
+
+	const desktopRows = Array.from(document.querySelectorAll('.tablaGrupos tbody .trozoGrupo'));
+	const mobileRows = Array.from(document.querySelectorAll('.tablaGruposMobile tbody .trozoGrupo'));
+
+	let currentFilter = '';
+
+	function applyFilter(txt, rows) {
+		rows.forEach(r => {
+			const nombre = r.querySelector('.NombreGrupo').textContent.trim().toLowerCase();
+			r.style.display = nombre.startsWith(txt) ? '' : 'none';
+		});
+	}
+
+	function updateClearButton(input, clearBtn) {
+		clearBtn.style.display = input.value.trim() ? 'inline' : 'none';
+	}
+
+	// Cuando uno escribe en pantalla, sincronizamos movil, y viceversa
+	desktopInput.addEventListener('input', function() {
+		currentFilter = this.value.trim().toLowerCase();
+		mobileInput.value = this.value;
+		updateClearButton(desktopInput, desktopClear);
+		updateClearButton(mobileInput, mobileClear);
+		applyFilter(currentFilter, desktopRows);
+	});
+	mobileInput.addEventListener('input', function() {
+		currentFilter = this.value.trim().toLowerCase();
+		desktopInput.value = this.value;
+		updateClearButton(desktopInput, desktopClear);
+		updateClearButton(mobileInput, mobileClear);
+		applyFilter(currentFilter, mobileRows);
+	});
+
+	// Cuando pulsas la X en pantalla o movil
+	desktopClear.addEventListener('click', () => {
+		currentFilter = '';
+		desktopInput.value = mobileInput.value = '';
+		updateClearButton(desktopInput, desktopClear);
+		updateClearButton(mobileInput, mobileClear);
+		desktopRows.forEach(r => r.style.display = '');
+		mobileRows.forEach(r => r.style.display = '');
+		desktopInput.focus();
+	});
+	mobileClear.addEventListener('click', () => {
+		currentFilter = '';
+		desktopInput.value = mobileInput.value = '';
+		updateClearButton(desktopInput, desktopClear);
+		updateClearButton(mobileInput, mobileClear);
+		desktopRows.forEach(r => r.style.display = '');
+		mobileRows.forEach(r => r.style.display = '');
+		mobileInput.focus();
+	});
+
+	const mq = window.matchMedia('(max-width: 768px)');
+	function onBreakpointChange(e) {
+		if (e.matches) {
+			// estamos en movil
+			mobileInput.value = currentFilter;
+			updateClearButton(mobileInput, mobileClear);
+			applyFilter(currentFilter, mobileRows);
+		} else {
+			// estamos en pantalla
+			desktopInput.value = currentFilter;
+			updateClearButton(desktopInput, desktopClear);
+			applyFilter(currentFilter, desktopRows);
+		}
+	}
+	mq.addEventListener('change', onBreakpointChange);
+
+	window.addEventListener('resize', () => onBreakpointChange(mq));
+
+	onBreakpointChange(mq);
+});
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', function() {
+	const userDesktopField = document.getElementById('filtroUsuariosAdmin');
+	const userDesktopClearBtn = document.getElementById('clearFiltroUsuariosAdmin');
+	const userMobileField = document.getElementById('filtroUsuariosAdminMobile');
+	const userMobileClearBtn = document.getElementById('clearFiltroUsuariosAdminMobile');
+
+	const userDesktopItems = Array.from(document.querySelectorAll('.tablaUsuarios tbody .trozoGrupo'));
+	const userMobileItems = Array.from(document.querySelectorAll('.tablaUsuariosMobile tbody .trozoGrupo'));
+
+	let userFilterText = '';
+
+	function filterUsers(txt, items) {
+		items.forEach(item => {
+			const alias = item.querySelector('.NombreGrupo').textContent.trim().toLowerCase();
+			item.style.display = alias.startsWith(txt) ? '' : 'none';
+		});
+	}
+
+	function refreshClearBtn(field, clearBtn) {
+		clearBtn.style.display = field.value.trim() ? 'inline' : 'none';
+	}
+
+	// sincroniza valor y botón “X” al escribir en pantalla
+	userDesktopField.addEventListener('input', function() {
+		userFilterText = this.value.trim().toLowerCase();
+		userMobileField.value = this.value;
+		refreshClearBtn(userDesktopField, userDesktopClearBtn);
+		refreshClearBtn(userMobileField, userMobileClearBtn);
+		filterUsers(userFilterText, userDesktopItems);
+	});
+
+	// sincroniza valor y botón “X” al escribir en movil
+	userMobileField.addEventListener('input', function() {
+		userFilterText = this.value.trim().toLowerCase();
+		userDesktopField.value = this.value;
+		refreshClearBtn(userDesktopField, userDesktopClearBtn);
+		refreshClearBtn(userMobileField, userMobileClearBtn);
+		filterUsers(userFilterText, userMobileItems);
+	});
+
+	// limpiar ambos filtros al clicar la “X” en pantalla
+	userDesktopClearBtn.addEventListener('click', () => {
+		userFilterText = '';
+		userDesktopField.value = userMobileField.value = '';
+		refreshClearBtn(userDesktopField, userDesktopClearBtn);
+		refreshClearBtn(userMobileField, userMobileClearBtn);
+		userDesktopItems.forEach(i => i.style.display = '');
+		userMobileItems.forEach(i => i.style.display = '');
+		userDesktopField.focus();
+	});
+
+	// limpiar ambos filtros al clicar la “X” en movil
+	userMobileClearBtn.addEventListener('click', () => {
+		userFilterText = '';
+		userDesktopField.value = userMobileField.value = '';
+		refreshClearBtn(userDesktopField, userDesktopClearBtn);
+		refreshClearBtn(userMobileField, userMobileClearBtn);
+		userDesktopItems.forEach(i => i.style.display = '');
+		userMobileItems.forEach(i => i.style.display = '');
+		userMobileField.focus();
+	});
+
+	const userViewMq = window.matchMedia('(max-width: 768px)');
+	function onUserViewChange(evt) {
+		if (evt.matches) {
+			// vista mobile
+			userMobileField.value = userFilterText;
+			refreshClearBtn(userMobileField, userMobileClearBtn);
+			filterUsers(userFilterText, userMobileItems);
+		} else {
+			// vista desktop
+			userDesktopField.value = userFilterText;
+			refreshClearBtn(userDesktopField, userDesktopClearBtn);
+			filterUsers(userFilterText, userDesktopItems);
+		}
+	}
+
+	userViewMq.addEventListener('change', onUserViewChange);
+	if (userViewMq.addListener) userViewMq.addListener(onUserViewChange);
+	window.addEventListener('resize', () => onUserViewChange(userViewMq));
+	onUserViewChange(userViewMq);
+});
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+document.addEventListener('DOMContentLoaded', function() {
+	const sAdminDesktopInput = document.getElementById('filtroUsuariosSAdmin');
+	const sAdminDesktopClear = document.getElementById('clearFiltroUsuariosSAdmin');
+	const sAdminMobileInput = document.getElementById('filtroUsuariosSAdminMobile');
+	const sAdminMobileClear = document.getElementById('clearFiltroUsuariosSAdminMobile');
+
+	const sAdminDesktopRows = Array.from(document.querySelectorAll('.tablaUsuarios tbody .trozoGrupo'));
+	const sAdminMobileRows = Array.from(document.querySelectorAll('.tablaUsuarios tbody .trozoGrupo'));
+
+	let currentFilterSAdmin = '';
+
+	function applySAdminFilter(txt, rows) {
+		rows.forEach(r => {
+			const alias = r.querySelector('.NombreGrupo').textContent.trim().toLowerCase();
+			r.style.display = alias.startsWith(txt) ? '' : 'none';
+		});
+	}
+
+	function updateSAdminClearBtn(input, btn) {
+		btn.style.display = input.value.trim() ? 'inline' : 'none';
+	}
+
+	sAdminDesktopInput.addEventListener('input', function() {
+		currentFilterSAdmin = this.value.trim().toLowerCase();
+		sAdminMobileInput.value = this.value;
+		updateSAdminClearBtn(sAdminDesktopInput, sAdminDesktopClear);
+		updateSAdminClearBtn(sAdminMobileInput, sAdminMobileClear);
+		applySAdminFilter(currentFilterSAdmin, sAdminDesktopRows);
+	});
+
+	sAdminMobileInput.addEventListener('input', function() {
+		currentFilterSAdmin = this.value.trim().toLowerCase();
+		sAdminDesktopInput.value = this.value;
+		updateSAdminClearBtn(sAdminDesktopInput, sAdminDesktopClear);
+		updateSAdminClearBtn(sAdminMobileInput, sAdminMobileClear);
+		applySAdminFilter(currentFilterSAdmin, sAdminMobileRows);
+	});
+
+	sAdminDesktopClear.addEventListener('click', () => {
+		currentFilterSAdmin = '';
+		sAdminDesktopInput.value = sAdminMobileInput.value = '';
+		updateSAdminClearBtn(sAdminDesktopInput, sAdminDesktopClear);
+		updateSAdminClearBtn(sAdminMobileInput, sAdminMobileClear);
+		sAdminDesktopRows.forEach(r => r.style.display = '');
+		sAdminMobileRows.forEach(r => r.style.display = '');
+		sAdminDesktopInput.focus();
+	});
+
+	sAdminMobileClear.addEventListener('click', () => {
+		currentFilterSAdmin = '';
+		sAdminDesktopInput.value = sAdminMobileInput.value = '';
+		updateSAdminClearBtn(sAdminDesktopInput, sAdminDesktopClear);
+		updateSAdminClearBtn(sAdminMobileInput, sAdminMobileClear);
+		sAdminDesktopRows.forEach(r => r.style.display = '');
+		sAdminMobileRows.forEach(r => r.style.display = '');
+		sAdminMobileInput.focus();
+	});
+
+	const sAdminMq = window.matchMedia('(max-width: 768px)');
+	function onSAdminBreakpointChange(e) {
+		if (e.matches) {
+			sAdminMobileInput.value = currentFilterSAdmin;
+			updateSAdminClearBtn(sAdminMobileInput, sAdminMobileClear);
+			applySAdminFilter(currentFilterSAdmin, sAdminMobileRows);
+		} else {
+			sAdminDesktopInput.value = currentFilterSAdmin;
+			updateSAdminClearBtn(sAdminDesktopInput, sAdminDesktopClear);
+			applySAdminFilter(currentFilterSAdmin, sAdminDesktopRows);
+		}
+	}
+	sAdminMq.addEventListener('change', onSAdminBreakpointChange);
+	if (sAdminMq.addListener) sAdminMq.addListener(onSAdminBreakpointChange);
+	window.addEventListener('resize', () => onSAdminBreakpointChange(sAdminMq));
+	onSAdminBreakpointChange(sAdminMq);
+});
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
