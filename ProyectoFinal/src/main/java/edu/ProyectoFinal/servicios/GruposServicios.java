@@ -8,10 +8,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import edu.ProyectoFinal.Dto.GrupoCompletoDto;
+import edu.ProyectoFinal.Dto.GrupoEspecificadoDto;
 import edu.ProyectoFinal.Dto.GruposListadoDto;
+import edu.ProyectoFinal.Dto.UsuarioDeGruposDto;
 import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -121,6 +128,81 @@ public class GruposServicios {
 		}
 
 		return vista;
+	}
+
+	public ModelAndView verGrupoEspecificado(HttpSession sesionIniciada, GrupoEspecificadoDto grupoEspecificado) {
+		ModelAndView vista = new ModelAndView();
+		String url = "http://localhost:8081/api/VerGrupoEspecificado";
+
+		try (Client cliente = ClientBuilder.newClient()) {
+			String grupoEspecificoJson = new ObjectMapper().writeValueAsString(grupoEspecificado);
+			Response respuestaApi = cliente.target(url).request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(grupoEspecificoJson, MediaType.APPLICATION_JSON));
+
+			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
+				String jsonString = respuestaApi.readEntity(String.class);
+				JSONObject respuestaJson = new JSONObject(jsonString);
+				JSONObject grupoJson = respuestaJson.optJSONObject("grupoEspecifico");
+				if (grupoJson != null) {
+					GrupoEspecificadoDto dto = mapearGrupoEspecificado(grupoJson);
+					if (dto.getNombreGrupo() != null) {
+						vista.addObject("grupoEspecificado", dto);
+						vista.setViewName("GrupoEspecifico");
+					} else {
+						vista.addObject("error", "No se encontró el grupo especificado.");
+						vista.setViewName("error");
+					}
+				} else {
+					vista.addObject("error", "Respuesta inesperada: no venía ‘grupoEspecifico’");
+					vista.setViewName("error");
+				}
+
+			} else {
+				vista.addObject("error",
+						"Error en la API al buscar el grupo (código " + respuestaApi.getStatus() + ").");
+				vista.setViewName("error");
+			}
+		} catch (Exception e) {
+			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			vista.setViewName("error");
+		}
+
+		return vista;
+	}
+
+	private GrupoEspecificadoDto mapearGrupoEspecificado(JSONObject respuestaJson) {
+		GrupoEspecificadoDto grupoEspecificado = new GrupoEspecificadoDto();
+		if (!respuestaJson.isNull("grupoId"))
+			grupoEspecificado.setGrupoId(respuestaJson.optLong("grupoId"));
+		if (!respuestaJson.isNull("usuarioId"))
+			grupoEspecificado.setUsuarioId(respuestaJson.optLong("usuarioId"));
+		grupoEspecificado.setNombreGrupo(respuestaJson.optString("nombreGrupo"));
+		grupoEspecificado.setAliasCreadorGrupo(respuestaJson.optString("aliasCreadorGrupo"));
+		grupoEspecificado.setDescripcionGrupoString(respuestaJson.optString("descripcionGrupoString"));
+		grupoEspecificado.setCategoriaGrupo(respuestaJson.optString("categoriaGrupo"));
+		grupoEspecificado.setSubcategoriaGrupo(respuestaJson.optString("subcategoriaGrupo"));
+		grupoEspecificado.setNumeroUsuarios(respuestaJson.optLong("numeroUsuarios"));
+
+		if (!respuestaJson.isNull("fechaCreacion")) {
+			String fechaString = respuestaJson.optString("fechaCreacion");
+			grupoEspecificado.setFechaCreacion(LocalDateTime.parse(fechaString));
+		}
+
+		List<UsuarioDeGruposDto> lista = new ArrayList<>();
+		if (respuestaJson.has("listadoDeUsuariosSuscritos")) {
+			JSONArray arr = respuestaJson.getJSONArray("listadoDeUsuariosSuscritos");
+			for (int i = 0; i < arr.length(); i++) {
+				JSONObject u = arr.getJSONObject(i);
+				UsuarioDeGruposDto ud = new UsuarioDeGruposDto();
+				ud.setAliasUsuario(u.optString("aliasUsuario"));
+				ud.setNombreUsuario(u.optString("nombreUsuario"));
+				ud.setEsPremium(u.optBoolean("esPremium"));
+				lista.add(ud);
+			}
+		}
+		grupoEspecificado.setListadoDeUsuariosSuscritos(lista);
+
+		return grupoEspecificado;
 	}
 
 	private List<GrupoCompletoDto> listadoGrupos(Response respuestaApi) {

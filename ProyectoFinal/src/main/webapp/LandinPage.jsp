@@ -192,7 +192,10 @@
 													<c:out value="${grupo.subCategoriaNombre}"></c:out>
 												</div>
 												<div>
-													<a href="#" class="verGrupo">Ver</a>
+													<c:url value="/PaginaGrupoEspecificado" var="grupoUrl">
+														<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+													</c:url>
+													<a href="${grupoUrl}" class="verGrupo">Ver</a>
 												</div>
 											</div>
 										</c:forEach>
@@ -273,7 +276,10 @@
 													<c:out value="${grupo.subCategoriaNombre}"></c:out>
 												</div>
 												<div>
-													<a href="#" class="verGrupo">Ver</a>
+													<c:url value="/PaginaGrupoEspecificado" var="grupoUrl">
+														<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+													</c:url>
+													<a href="${grupoUrl}" class="verGrupo">Ver</a>
 												</div>
 											</div>
 										</c:forEach>
@@ -303,7 +309,10 @@
 													<c:out value="${grupo.categoriaNombre}"></c:out>
 												</div>
 												<div>
-													<a href="#" class="verGrupo">Ver</a>
+													<c:url value="/PaginaGrupoEspecificado" var="grupoUrl">
+														<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+													</c:url>
+													<a href="${grupoUrl}" class="verGrupo">Ver</a>
 												</div>
 											</div>
 										</c:forEach>
@@ -376,7 +385,10 @@
 											<c:out value="${grupo.categoriaNombre}"></c:out>
 										</div>
 										<div>
-											<a href="#" class="verGrupo">Ver</a>
+											<c:url value="/PaginaGrupoEspecificado" var="grupoUrl">
+												<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+											</c:url>
+											<a href="${grupoUrl}" class="verGrupo">Ver</a>
 										</div>
 									</div>
 								</c:forEach>

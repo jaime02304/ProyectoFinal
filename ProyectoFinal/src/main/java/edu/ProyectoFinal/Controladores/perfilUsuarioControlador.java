@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.ComentariosPerfilDto;
@@ -45,11 +46,24 @@ public class perfilUsuarioControlador {
 	 * @return
 	 */
 	@GetMapping("/PerfilUsuario")
-	public ModelAndView vistaPerfilYAdministradores(HttpSession sesionIniciada) {
+	public ModelAndView vistaPerfilYAdministradores(HttpSession sesionIniciada, RedirectAttributes redirectAttrs) {
 		ModelAndView vista = new ModelAndView();
 		UsuarioPerfilDto usuarioABuscar = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
 
 		try {
+			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
+			if (sesionIniciada == null || usuario == null) {
+				ModelAndView errorVista = new ModelAndView("error");
+				errorVista.addObject("error",
+						"No se ha detectado un usuario activo. Por favor, inicie sesión antes de continuar.");
+				return errorVista;
+			}
+			if (usuario.getEsVerificadoEntidad() == false) {
+				vista.setViewName("redirect:/");
+				redirectAttrs.addFlashAttribute("infoVerificacion",
+						"No se ha detectado un usuario verificado. Por favor, debe de verificarse antes de continuar.");
+				return vista;
+			}
 			logger.info(
 					"Cargando perfil para el usuario: " + usuarioABuscar != null ? usuarioABuscar.getNombreCompletoUsu()
 							: "Desconocido");

@@ -192,7 +192,10 @@
 								<c:out value="${grupo.descripcionGrupo}" />
 							</div>
 							<div>
-								<a href="#" class="verPaginaGrupo">Ver</a>
+								<c:url value="/PaginaGrupoEspecificado" var="grupoUrl">
+									<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+								</c:url>
+								<a href="${grupoUrl}" class="verPaginaGrupo">Ver</a>
 							</div>
 						</div>
 					</c:forEach>
@@ -252,7 +255,10 @@
 								<c:out value="${grupo.descripcionGrupo}" />
 							</div>
 							<div>
-								<a href="#" class="verPaginaGrupo">Ver</a>
+								<c:url value="/PaginaGrupoEspecificado" var="grupoUrl">
+									<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+								</c:url>
+								<a href="${grupoUrl}" class="verPaginaGrupo">Ver</a>
 							</div>
 						</div>
 					</c:forEach>
