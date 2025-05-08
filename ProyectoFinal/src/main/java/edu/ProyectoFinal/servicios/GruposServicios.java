@@ -4,16 +4,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import edu.ProyectoFinal.Dto.GrupoCompletoDto;
 import edu.ProyectoFinal.Dto.GrupoEspecificadoDto;
 import edu.ProyectoFinal.Dto.GruposListadoDto;
+import edu.ProyectoFinal.Dto.SuscripcionDto;
 import edu.ProyectoFinal.Dto.UsuarioDeGruposDto;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.Client;
@@ -106,6 +108,13 @@ public class GruposServicios {
 		return listaGrupos;
 	}
 
+	/**
+	 * Metodo para la recogida de los grupos
+	 * 
+	 * @author jpribio - 08/05/25
+	 * @param sesionIniciada
+	 * @return
+	 */
 	public ModelAndView recogidaDeGrupos(HttpSession sesionIniciada) {
 		ModelAndView vista = new ModelAndView();
 		String url = "http://localhost:8081/api/RecogerGruposTotales";
@@ -130,6 +139,67 @@ public class GruposServicios {
 		return vista;
 	}
 
+	/**
+	 * metodo para enviar la solicitud para suscribirse
+	 * 
+	 * @author jpribio - 08/05/25
+	 * @param suscripcion
+	 * @return
+	 */
+	public ResponseEntity<String> enviarSuscripcion(SuscripcionDto suscripcion) {
+		String API_URL = "http://localhost:8081/api/UnirmeAlGrupo";
+		try (Client cliente = ClientBuilder.newClient()) {
+			String suscripcionJson = new ObjectMapper().writeValueAsString(suscripcion);
+
+			Response respuestaApi = cliente.target(API_URL).request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(suscripcionJson, MediaType.APPLICATION_JSON));
+
+			int status = respuestaApi.getStatus();
+			String mensaje = respuestaApi.getHeaderString("mensaje");
+
+			if (mensaje == null) {
+				mensaje = "No se ha realizado la suscripcion correctamente";
+			}
+
+			return ResponseEntity.status(status).body(mensaje);
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+					.body("Error al conectar con la API: " + e.getMessage());
+		}
+	}
+
+	public ResponseEntity<String> enviarEliminacionSuscripcion(SuscripcionDto suscripcion) {
+		String API_URL = "http://localhost:8081/api/AbandonarGrupo";
+		try (Client cliente = ClientBuilder.newClient()) {
+			String suscripcionJson = new ObjectMapper().writeValueAsString(suscripcion);
+
+			Response respuestaApi = cliente.target(API_URL).request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(suscripcionJson, MediaType.APPLICATION_JSON));
+
+			int status = respuestaApi.getStatus();
+			String mensaje = respuestaApi.getHeaderString("mensaje");
+
+			if (mensaje == null) {
+				mensaje = "No se ha podido eliminar la suscripción correctamente.";
+			}
+
+			return ResponseEntity.status(status).body(mensaje);
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+					.body("Error al conectar con la API para eliminar la suscripción: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Metodo para ver el grupo especificado
+	 * 
+	 * @author jpribio - 08/05/25
+	 * @param sesionIniciada
+	 * @param grupoEspecificado
+	 * @return
+	 */
 	public ModelAndView verGrupoEspecificado(HttpSession sesionIniciada, GrupoEspecificadoDto grupoEspecificado) {
 		ModelAndView vista = new ModelAndView();
 		String url = "http://localhost:8081/api/VerGrupoEspecificado";
@@ -170,6 +240,12 @@ public class GruposServicios {
 		return vista;
 	}
 
+	/**
+	 * Metodo privado para mapear los elementos que vienen del grupo especificado
+	 * 
+	 * @param respuestaJson
+	 * @return
+	 */
 	private GrupoEspecificadoDto mapearGrupoEspecificado(JSONObject respuestaJson) {
 		GrupoEspecificadoDto grupoEspecificado = new GrupoEspecificadoDto();
 		if (!respuestaJson.isNull("grupoId"))
@@ -205,6 +281,12 @@ public class GruposServicios {
 		return grupoEspecificado;
 	}
 
+	/**
+	 * Metodo para mapear los elementos del listado del grupo
+	 * 
+	 * @param respuestaApi
+	 * @return
+	 */
 	private List<GrupoCompletoDto> listadoGrupos(Response respuestaApi) {
 		List<GrupoCompletoDto> listaGrupos = new ArrayList<>();
 

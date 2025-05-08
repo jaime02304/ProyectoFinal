@@ -392,3 +392,103 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 });
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+function enviarSolicitudUnirse() {
+	var nombreGrupoElement = document.querySelector(".nombreGrupo");
+	var nombreGrupo = nombreGrupoElement ? nombreGrupoElement.textContent : null;
+
+	if (!nombreGrupo) {
+		mostrarAlertaPersonalizada("No se pudo obtener el nombre del grupo.");
+		return;
+	}
+
+	var formData = new URLSearchParams();
+	formData.append("nombreGrupo", nombreGrupo);
+
+	var contextPath = window.location.pathname.split('/')[1];
+
+	fetch("/" + contextPath + "/UnirseAlGrupo", {
+		method: "POST",
+		body: formData
+	})
+		.then(function(response) {
+			if (response.ok) {
+				return response.text();
+			} else {
+				mostrarAlertaPersonalizada("Su suscripciión ha sido denegada");
+			}
+		})
+		.then(function(mensaje) {
+			if (mensaje) {
+				mostrarAlertaPersonalizada("Su suscripciión ha sido totalmente valida");
+			}
+		})
+		.catch(function(error) {
+			console.error("Error en la solicitud:", error);
+			mostrarAlertaPersonalizada("Ocurrió un error inesperado.");
+		});
+}
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+function enviarSolicitudEliminar() {
+	var nombreGrupoElement = document.querySelector(".nombreGrupo");
+	var nombreGrupo = nombreGrupoElement ? nombreGrupoElement.textContent : null;
+
+	if (!nombreGrupo) {
+		mostrarAlertaPersonalizada("No se pudo obtener el nombre del grupo.");
+		return;
+	}
+
+	var formData = new URLSearchParams();
+	formData.append("nombreGrupo", nombreGrupo);
+
+	var contextPath = window.location.pathname.split('/')[1];
+
+	fetch("/" + contextPath + "/EliminarDelGrupo", {
+		method: "POST",
+		body: formData
+	})
+		.then(function(response) {
+			if (response.ok) {
+				return response.text();
+			} else {
+				mostrarAlertaPersonalizada("Error al eliminar la suscripción del grupo.");
+			}
+		})
+		.then(function(mensaje) {
+			if (mensaje) {
+				mostrarAlertaPersonalizada("Se ha eliminado su suscripcion perfectamente.");
+			}
+		})
+		.catch(function(error) {
+			console.error("Error en la solicitud:", error);
+			mostrarAlertaPersonalizada("Ocurrió un error inesperado al eliminar la suscripción.");
+		});
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+function mostrarAlertaPersonalizada(mensaje) {
+	var alerta = document.getElementById("alertaPersonalizada");
+	document.getElementById("alertaMensaje").textContent = mensaje;
+	alerta.style.display = "flex";
+}
+
+function cerrarAlertaPersonalizada() {
+	document.getElementById("alertaPersonalizada").style.display = "none";
+	location.reload();
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+

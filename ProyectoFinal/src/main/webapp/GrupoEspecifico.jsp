@@ -61,7 +61,7 @@
 		</div>
 	</header>
 
-
+	<c:set var="usuario" value="${sessionScope.Usuario}" />
 	<c:set var="grupo" value="${grupoEspecificado}" />
 	<main class="contenedorMainGrupoEspecifico">
 		<div class="contenedorPrincipalGrupoEspecifico d-none d-lg-block">
@@ -92,12 +92,15 @@
 							<div>Alias</div>
 							<div>Tipo usuario</div>
 						</div>
-						<c:forEach var="usuario"
-							items="${grupo.listadoDeUsuariosSuscritos}">
+						<c:set var="estaSuscrito" value="false" />
+						<c:forEach var="u" items="${grupo.listadoDeUsuariosSuscritos}">
 							<div class="elemento">
-								<div>${usuario.nombreUsuario}</div>
-								<div>${usuario.aliasUsuario}</div>
-								<div>${usuario.esPremium ? 'Premium' : 'Normal'}</div>
+								<c:if test="${u.aliasUsuario == usuario.aliasUsu}">
+									<c:set var="estaSuscrito" value="true" />
+								</c:if>
+								<div>${u.nombreUsuario}</div>
+								<div class="aliasGrupo">${u.aliasUsuario}</div>
+								<div>${u.esPremium ? 'Premium' : 'Normal'}</div>
 							</div>
 						</c:forEach>
 					</div>
@@ -108,12 +111,29 @@
 							${grupo.numeroUsuarios}</div>
 						<div class="parteBuscador">
 							<p class="BuscarUsuarioTexto">Buscar usuario</p>
-							<input type="text">
-							<Button class="buscar">Buscar</Button>
+							<div class="inputWrapper">
+								<input type="text" id="filtroUsuariosGrupoEspecifico"
+									class="inputBuscar"> <span
+									id="clearFiltroUsuariosGrupoEspecifico" class="clearFiltro">✕</span>
+							</div>
 						</div>
 						<div
 							style="width: 100%; display: flex; align-items: center; justify-content: center;">
-							<Button class="unirse">Unirse</Button>
+							<c:choose>
+								<c:when test="${usuario.aliasUsu == grupo.aliasCreadorGrupo}">
+								</c:when>
+								<c:otherwise>
+									<c:choose>
+										<c:when test="${estaSuscrito}">
+											<Button class="unirse" onclick="enviarSolicitudEliminar()">Abandonar</Button>
+										</c:when>
+										<c:otherwise>
+											<Button class="unirse" id="botonUnirse"
+												onclick="enviarSolicitudUnirse()">Unirse</Button>
+										</c:otherwise>
+									</c:choose>
+								</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 				</div>
@@ -150,34 +170,128 @@
 							<div>Alias</div>
 							<div>Tipo</div>
 						</div>
-						<c:forEach var="usuario"
-							items="${grupo.listadoDeUsuariosSuscritos}">
+						<c:set var="estaSuscrito" value="false" />
+						<c:forEach var="u" items="${grupo.listadoDeUsuariosSuscritos}">
 							<div class="elemento-movil">
-								<div>${usuario.nombreUsuario}</div>
-								<div>${usuario.aliasUsuario}</div>
-								<div>${usuario.esPremium ? 'Premium' : 'Normal'}</div>
+								<c:if test="${u.aliasUsuario == usuario.aliasUsu}">
+									<c:set var="estaSuscrito" value="true" />
+								</c:if>
+								<div>${u.nombreUsuario}</div>
+								<div class="aliasGrupo">${u.aliasUsuario}</div>
+								<div>${u.esPremium ? 'Premium' : 'Normal'}</div>
 							</div>
 						</c:forEach>
 					</div>
 				</div>
+
 				<div class="acciones-movil">
 					<div class="bloque-movil">
 						<div class="numeroUsuarios-movil">Nº de usuarios:
 							${grupo.numeroUsuarios}</div>
 						<div class="parteBuscador-movil">
 							<p class="BuscarUsuarioTexto-movil">Buscar usuario</p>
-							<input type="text" class="inputBuscar-movil">
-							<button class="buscar-movil">Buscar</button>
+							<div class="inputWrapper-movil">
+								<input type="text" id="filtroUsuariosGrupoEspecificoMobile"
+									class="inputBuscar-movil"> <span
+									id="clearFiltroUsuariosGrupoEspecificoMobile"
+									class="clearFiltro-movil">✕</span>
+							</div>
 						</div>
-						<button class="unirse-movil">Unirse</button>
+						<c:choose>
+							<c:when test="${usuario.aliasUsu == grupo.aliasCreadorGrupo}">
+							</c:when>
+							<c:otherwise>
+								<c:choose>
+									<c:when test="${estaSuscrito}">
+										<Button class="unirse-movil"
+											onclick="enviarSolicitudEliminar()">Abandonar</Button>
+									</c:when>
+									<c:otherwise>
+										<Button class="unirse-movil" id="botonUnirse"
+											onclick="enviarSolicitudUnirse()">Unirse</Button>
+									</c:otherwise>
+								</c:choose>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
 		</div>
 
+
+		<div id="alertaPersonalizada" class="alerta-personalizada">
+			<div class="alerta-contenido">
+				<p id="alertaMensaje"></p>
+				<button onclick="cerrarAlertaPersonalizada()">Aceptar</button>
+			</div>
+		</div>
+
 	</main>
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+	    const inputDesktop = document.getElementById("filtroUsuariosGrupoEspecifico");
+	    const clearDesktop = document.getElementById("clearFiltroUsuariosGrupoEspecifico");
+	    const filasDesktop = document.querySelectorAll(".listadoUsuarios .elemento");
 
+	    const inputMobile = document.getElementById("filtroUsuariosGrupoEspecificoMobile");
+	    const clearMobile = document.getElementById("clearFiltroUsuariosGrupoEspecificoMobile");
+	    const filasMobile = document.querySelectorAll(".listadoUsuarios-movil .elemento-movil");
 
+	    function filtrarAlias(input, clearBtn, filas) {
+	      const texto = input.value.toLowerCase();
+
+	      filas.forEach((fila, index) => {
+	        if (index === 0) return; // Saltar encabezado
+	        const aliasDiv = fila.querySelector(".aliasGrupo");
+	        const aliasTexto = aliasDiv ? aliasDiv.textContent.toLowerCase() : "";
+	        fila.style.display = aliasTexto.startsWith(texto) ? "" : "none";
+	      });
+
+	      clearBtn.style.display = texto ? "inline" : "none";
+	    }
+
+	    // 🔁 Sincroniza los valores entre ambos inputs
+	    function sincronizarInputs(origen, destino) {
+	      if (destino.value !== origen.value) {
+	        destino.value = origen.value;
+	        filtrarAlias(destino, destino === inputDesktop ? clearDesktop : clearMobile, destino === inputDesktop ? filasDesktop : filasMobile);
+	      }
+	    }
+
+	    // Eventos de input que sincronizan entre sí
+	    inputDesktop.addEventListener("input", () => {
+	      sincronizarInputs(inputDesktop, inputMobile);
+	      filtrarAlias(inputDesktop, clearDesktop, filasDesktop);
+	    });
+
+	    inputMobile.addEventListener("input", () => {
+	      sincronizarInputs(inputMobile, inputDesktop);
+	      filtrarAlias(inputMobile, clearMobile, filasMobile);
+	    });
+
+	    // Botones de limpiar
+	    clearDesktop.addEventListener("click", () => {
+	      inputDesktop.value = "";
+	      inputMobile.value = "";
+	      filtrarAlias(inputDesktop, clearDesktop, filasDesktop);
+	      filtrarAlias(inputMobile, clearMobile, filasMobile);
+	    });
+
+	    clearMobile.addEventListener("click", () => {
+	      inputDesktop.value = "";
+	      inputMobile.value = "";
+	      filtrarAlias(inputDesktop, clearDesktop, filasDesktop);
+	      filtrarAlias(inputMobile, clearMobile, filasMobile);
+	    });
+
+	    // Cuando se cambia el tamaño de ventana, sincronizamos de nuevo
+	    window.addEventListener("resize", () => {
+	      sincronizarInputs(inputDesktop, inputMobile);
+	      sincronizarInputs(inputMobile, inputDesktop);
+	    });
+	  });
+	</script>
+	<script src="<%=request.getContextPath()%>/js/javaScriptGrupo.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

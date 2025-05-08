@@ -188,14 +188,6 @@
 	align-items: center;
 }
 
-.parteBuscador input {
-	color: black;
-	border: 2px solid black;
-	border-radius: 10px;
-	width: 80%;
-	text-align: center;
-}
-
 .BuscarUsuarioTexto {
 	color: black;
 	font-family: "Press Start 2P", cursive;
@@ -378,13 +370,34 @@
 	margin-bottom: 12px;
 }
 
+.inputWrapper-movil {
+	position: relative;
+	width: 80%;
+}
+
 .inputBuscar-movil {
+	width: 100%;
+	padding-right: 30px;
+	box-sizing: border-box;
 	color: black;
 	border: 2px solid black;
 	border-radius: 10px;
-	width: 80%;
 	text-align: center;
-	margin: 6px 0;
+	height: 36px;
+	line-height: 36px;
+}
+
+.clearFiltro-movil {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: red;
+	font-weight: bold;
+	font-size: 18px;
+	cursor: pointer;
+	display: none;
+	z-index: 2;
 }
 
 .BuscarUsuarioTexto-movil {
@@ -401,4 +414,32 @@
 	width: 80%;
 	padding: 8px 0;
 	margin: 4px 0;
+}
+
+.inputWrapper {
+	position: relative;
+	width: 80%;
+}
+
+.inputBuscar {
+	width: 100%;
+	padding-right: 30px;
+	box-sizing: border-box;
+	color: black;
+	border: 2px solid black;
+	border-radius: 10px;
+	text-align: center;
+}
+
+.clearFiltro {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: red;
+	font-weight: bold;
+	font-size: 18px;
+	cursor: pointer;
+	display: none;
+	z-index: 2;
 }
