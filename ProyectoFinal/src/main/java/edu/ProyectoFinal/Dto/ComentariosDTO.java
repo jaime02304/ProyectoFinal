@@ -1,5 +1,10 @@
 package edu.ProyectoFinal.Dto;
 
+/**
+ * Clase con los atributos de los comentarios
+ * 
+ * @author jpribio - 16/04/25
+ */
 public class ComentariosDTO {
 
 	private String aliasUsuarioComentario = "aaaaa";
@@ -48,7 +53,6 @@ public class ComentariosDTO {
 	public void setIdUsuario(long idUsuario) {
 		this.idUsuario = idUsuario;
 	}
-
 
 	public String getGrupoComentario() {
 		return grupoComentario;

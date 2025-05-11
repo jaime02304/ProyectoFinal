@@ -95,12 +95,14 @@ public class InicioSesionControlador {
 	@PostMapping("/RecuperarContrasena")
 	public ResponseEntity<String> recuperarContrasena(@RequestParam("correoElectronicoUsu") String correo) {
 		if (correo == null || correo.trim().isEmpty()) {
+			logger.warn("Error en recuperación de contraseña: correo inválido o vacío.");
 			return ResponseEntity.badRequest().body("Correo inválido.");
 		}
 		boolean enviado = servicioDeInicioDeSesion.enviarCorreoRecuperacion(correo);
 		if (enviado) {
 			return ResponseEntity.ok("Correo enviado con éxito.");
 		} else {
+			logger.warn("Fallo al enviar correo de recuperación para: {}" + correo);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar el correo.");
 		}
 	}
@@ -122,6 +124,7 @@ public class InicioSesionControlador {
 		if (exitoso) {
 			return ResponseEntity.ok("Contraseña cambiada correctamente.");
 		} else {
+			logger.warn("Error al cambiar contraseña con token: {}" + token);
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se pudo cambiar la contraseña.");
 		}
 	}

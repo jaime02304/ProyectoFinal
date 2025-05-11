@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -165,13 +166,22 @@
 																value="${grupo.categoriaNombre}" /></td>
 														<td class="tematicaGrupo"><c:out
 																value="${grupo.subCategoriaNombre}" /></td>
-														<td><a href="#" class="verGrupo">Ver</a></td>
+														<td><c:url value="/PaginaGrupoEspecificado"
+																var="grupoUrl">
+																<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+															</c:url><a href="${grupoUrl}" class="verGrupo">Ver</a></td>
 													</tr>
 												</c:forEach>
 											</tbody>
 										</table>
+										<c:set var="grupoCount"
+											value="${fn:length(listadoGruposUsuario)}" />
+										<c:set var="maxGrupos" value="${usuario.esPremium ? 6 : 3}" />
 										<div class="tiposMensaje">
-											<button onclick="openCreacionGrupoModal()">Crear
+											<button
+												onclick="${grupoCount < maxGrupos 
+								                ? 'openCreacionGrupoModal()' 
+								                        : 'mostrarAlertaPersonalizada(\'Ya ha realizado el límite de grupos posibles\')'}">Crear
 												Grupo</button>
 										</div>
 									</c:otherwise>
@@ -487,13 +497,22 @@
 															value="${grupo.categoriaNombre}" /></td>
 													<td class="tematicaGrupo"><c:out
 															value="${grupo.subCategoriaNombre}" /></td>
-													<td><a href="#" class="verGrupo">Ver</a></td>
+													<td><c:url value="/PaginaGrupoEspecificado"
+															var="grupoUrl">
+															<c:param name="nombreGrupo" value="${grupo.nombreGrupo}" />
+														</c:url><a href="${grupoUrl}" class="verGrupo">Ver</a></td>
 												</tr>
 											</c:forEach>
 										</tbody>
 									</table>
 									<div class="tiposMensaje">
-										<button onclick="openCreacionGrupoModal()">Crear
+										<c:set var="grupoCount"
+											value="${fn:length(listadoGruposUsuario)}" />
+										<c:set var="maxGrupos" value="${usuario.esPremium ? 6 : 3}" />
+										<button
+											onclick="${grupoCount < maxGrupos 
+								                ? 'openCreacionGrupoModal()' 
+								                        : 'mostrarAlertaPersonalizada(\'Ya ha realizado el límite de grupos posibles\')'}">Crear
 											Grupo</button>
 									</div>
 								</c:otherwise>

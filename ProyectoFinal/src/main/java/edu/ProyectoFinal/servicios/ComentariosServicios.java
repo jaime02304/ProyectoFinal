@@ -20,6 +20,13 @@ import jakarta.ws.rs.core.Response;
  */
 public class ComentariosServicios {
 
+	/**
+	 * MEtodo para recoger los comentarios
+	 * 
+	 * @author jpribio - 16/04/25
+	 * @param sesionInicaida
+	 * @return
+	 */
 	public ModelAndView recogidaDeComentarios(HttpSession sesionInicaida) {
 		ModelAndView vista = new ModelAndView();
 		String url = "http://localhost:8081/api/RecogerComentarios";
@@ -44,6 +51,13 @@ public class ComentariosServicios {
 		return vista;
 	}
 
+	/**
+	 * MEtodo privado para converti lo que le viene en un listado del dto
+	 * 
+	 * @author jpribio - 16/04/25
+	 * @param respuestaApi
+	 * @return
+	 */
 	private List<ComentariosDTO> listadoComentarios(Response respuestaApi) {
 		List<ComentariosDTO> listaGrupos = new ArrayList<>();
 

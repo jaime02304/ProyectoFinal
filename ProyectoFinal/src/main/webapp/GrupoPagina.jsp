@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -159,9 +160,18 @@
 							</ul>
 						</div>
 					</div>
+					<c:set var="userGroupCount" value="0" />
+					<c:forEach var="grp" items="${listadoGruposTotales}">
+						<c:if test="${grp.aliasCreadorUString == usuario.aliasUsu}">
+							<c:set var="userGroupCount" value="${userGroupCount + 1}" />
+						</c:if>
+					</c:forEach>
+					<c:set var="maxGrupos" value="${usuario.esPremium ? 6 : 3}" />
 					<div class="nuevoGrupo">
 						<button class="crear" id="crear"
-							onclick="openCreacionGrupoModal(false)">Crear</button>
+							onclick="${userGroupCount < maxGrupos
+					               ? 'openCreacionGrupoModal(false)'
+					                       : 'mostrarAlerta(\'Ya ha realizado el límite de grupos posibles\')'">Crear</button>
 					</div>
 				</div>
 				<div class="contenedorGrupo">
@@ -223,8 +233,18 @@
 									id="subcategoriaFiltro"></select>
 							</div>
 						</div>
+
+						<c:set var="userGroupCount" value="0" />
+						<c:forEach var="grp" items="${listadoGruposTotales}">
+							<c:if test="${grp.aliasCreadorUString == usuario.aliasUsu}">
+								<c:set var="userGroupCount" value="${userGroupCount + 1}" />
+							</c:if>
+						</c:forEach>
+						<c:set var="maxGrupos" value="${usuario.esPremium ? 6 : 3}" />
 						<button class="crear2 d-none d-sm-block"
-							onclick="openCreacionGrupoModal(false)">Crear</button>
+							onclick="${userGroupCount < maxGrupos
+				                   ? 'openCreacionGrupoModal(false)'
+				                           : 'mostrarAlerta(\'Ya ha realizado el límite de grupos posibles\')'}">Crear</button>
 					</div>
 				</div>
 				<div class="contenedorGrupo2">
