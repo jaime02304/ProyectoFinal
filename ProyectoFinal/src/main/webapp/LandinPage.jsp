@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -138,14 +139,9 @@
 								Usuario</div>
 							<div class="contenedorTextoEImagen">
 								<img alt="Imagen del Usuario" class="imagen-usuario"
-									id="imagen-usuario" />
+									id="imagen-usuario" src="" />
 								<div class="texto-usuario" id="texto-usuario">Texto del
 									usuario</div>
-								<div class="contenedorBoton">
-									<button class="corazonBoton" type="button">
-										<i class="fas fa-heart"></i>
-									</button>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -234,15 +230,13 @@
 									</button>
 								</div>
 								<div class="contenido-carrusel2">
-									<div class="titulo-usuario2">Nombre del Usuario</div>
+									<div class="titulo-usuario2" id="titulo-usuario2">Nombre
+										del Usuario</div>
 									<div class="contenedorTextoEImagen2">
-										<img alt="Imagen del Usuario" class="imagen-usuario2" />
-										<div class="texto-usuario2">Texto del usuario</div>
-										<div class="contenedorBoton">
-											<button class="corazonBoton2" type="button">
-												<i class="fas fa-heart"></i>
-											</button>
-										</div>
+										<img alt="Imagen del Usuario" class="imagen-usuario2"
+											id="imagen-usuario2" src="" />
+										<div class="texto-usuario2" id="texto-usuario2">Texto
+											del usuario</div>
 									</div>
 								</div>
 							</div>
@@ -348,15 +342,13 @@
 							</button>
 						</div>
 						<div class="contenido-carrusel3">
-							<div class="titulo-usuario3">Nombre del Usuario</div>
+							<div class="titulo-usuario3" id="titulo-usuario3">Nombre
+								del Usuario</div>
 							<div class="contenedorTextoEImagen3">
-								<img alt="Imagen del Usuario" class="imagen-usuario3" />
-								<div class="texto-usuario3">Texto del usuario</div>
-								<div class="contenedorBoton">
-									<button class="corazonBoton3" type="button">
-										<i class="fas fa-heart"></i>
-									</button>
-								</div>
+								<img alt="Imagen del Usuario" class="imagen-usuario3"
+									id="imagen-usuario3" src="" />
+								<div class="texto-usuario3" id="texto-usuario3">Texto del
+									usuario</div>
 							</div>
 						</div>
 					</div>
@@ -407,7 +399,17 @@
 			</div>
 		</c:if>
 	</main>
-
+	<script>
+		  var comentariosIndex = [
+  			  <c:forEach var="c" items="${listaComentariosIndex}" varStatus="st">
+      			{
+       			 alias:     "${fn:escapeXml(c.aliasUsuarioComentario)}",
+       			 texto:     "${fn:escapeXml(c.comentarioTexto)}",
+        		 imagenUrl: "data:image/jpeg;base64,${fn:escapeXml(c.imagenUsuario)}"
+     			 }<c:if test="${!st.last}">,</c:if>
+   			 </c:forEach>
+ 		 ];
+	</script>
 	<script src="<%=request.getContextPath()%>/js/javaScript.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

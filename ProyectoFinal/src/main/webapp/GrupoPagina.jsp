@@ -58,8 +58,8 @@
 				<!-- Columna de los botones (a la derecha) -->
 				<div class="boton-contenedor">
 					<a href="<%=request.getContextPath()%>/PaginaGrupo"><button
-							class="botonNavegador botonGrupo">GRUPOS</button></a> <a
-						href="<%=request.getContextPath()%>/ComentarioPagina"
+							class="botonNavegador botonGrupo" id="activoBotonIdentificado">GRUPOS</button></a>
+					<a href="<%=request.getContextPath()%>/ComentarioPagina"
 						class="d-xl-block d-none"><button
 							class="botonNavegador botonAnime">ANIMES</button></a> <a
 						href="<%=request.getContextPath()%>/ComentarioPagina"
@@ -171,7 +171,7 @@
 						<button class="crear" id="crear"
 							onclick="${userGroupCount < maxGrupos
 					               ? 'openCreacionGrupoModal(false)'
-					                       : 'mostrarAlerta(\'Ya ha realizado el límite de grupos posibles\')'">Crear</button>
+					                       : 'mostrarAlerta(\'Ya ha realizado el límite de grupos posibles\')'}">Crear</button>
 					</div>
 				</div>
 				<div class="contenedorGrupo">

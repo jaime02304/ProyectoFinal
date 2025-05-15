@@ -51,16 +51,19 @@
 						alt="Logo de la pagina web" width="200px" /> </a>
 				</div>
 				<div class="boton-contenedor">
-					<a href="<%=request.getContextPath()%>/PaginaGrupo"><button class="botonNavegador botonGrupo">GRUPOS</button></a>
+					<a href="<%=request.getContextPath()%>/PaginaGrupo"><button
+							class="botonNavegador botonGrupo">GRUPOS</button></a> <a
+						href="<%=request.getContextPath()%>/ComentarioPagina"
+						class="d-xl-block d-none"><button
+							class="botonNavegador botonAnime" id="activoBotonIdentificado">ANIMES</button></a>
 					<a href="<%=request.getContextPath()%>/ComentarioPagina"
 						class="d-xl-block d-none"><button
-							class="botonNavegador botonAnime">ANIMES</button></a> <a
-						href="<%=request.getContextPath()%>/ComentarioPagina"
-						class="d-xl-block d-none"><button
-							class="botonNavegador botonVideojuegos">VIDEOJUEGOS</button></a> <a
+							class="botonNavegador botonVideojuegos"
+							id="activoBotonIdentificado">VIDEOJUEGOS</button></a> <a
 						href="<%=request.getContextPath()%>/ComentarioPagina"
 						class="d-xl-none d-md-block d-none"><button
-							class="botonNavegador botonCategoria">COMENTARIOS</button></a>
+							class="botonNavegador botonCategoria"
+							id="activoBotonIdentificado">COMENTARIOS</button></a>
 					<c:if test="${Usuario == null}">
 						<a href="<%=request.getContextPath()%>/InicioSesion"><button
 								class="botonIconoIS">

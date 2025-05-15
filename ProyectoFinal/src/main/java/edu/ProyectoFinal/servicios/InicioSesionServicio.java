@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.ProyectoFinal.Configuraciones.OAuthConfiguracion;
+import edu.ProyectoFinal.Configuraciones.RutasGenericas;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.Dto.UsuarioRegistroDto;
 import edu.ProyectoFinal.Utilidades.Util;
@@ -36,6 +37,8 @@ import jakarta.ws.rs.core.Response;
 public class InicioSesionServicio {
 
 	GruposServicios servicioGrupos = new GruposServicios();
+
+	ComentariosServicios servicioComentarios = new ComentariosServicios();
 
 	Util utilidades = new Util();
 
@@ -74,7 +77,7 @@ public class InicioSesionServicio {
 			return vista;
 		}
 
-		String url = "http://localhost:8081/api/usuario/registro";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/usuario/registro";
 
 		try (Client cliente = ClientBuilder.newClient()) {
 			usuarioNuevo.setContraseniaUsu(utilidades.encriptarASHA256(usuarioNuevo.getContraseniaUsu()));
@@ -87,10 +90,13 @@ public class InicioSesionServicio {
 				UsuarioPerfilDto usuarioPerfil = respuestaApi.readEntity(UsuarioPerfilDto.class);
 				sesionIniciada.setAttribute("Usuario", usuarioPerfil);
 				sesionIniciada.setMaxInactiveInterval(60 * 60 * 24 * 7);
-				vista = servicioGrupos.obtenerLosGruposTops();
-				vista.setViewName("LandinPage");
+				ModelAndView gruposVista = servicioGrupos.obtenerLosGruposTops();
+				vista.addAllObjects(gruposVista.getModel());
+				ModelAndView comentariosVista = servicioComentarios.recogidaDeComentariosIndex();
+				vista.addAllObjects(comentariosVista.getModel());
 				vista.addObject("infoVerificacion",
-						"Registro completado con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.");
+						"Registro completado con éxito. Por favor, revisa su correo electrónico para verificar tu cuenta.");
+				vista.setViewName("LandinPage");
 			} else {
 				vista.setViewName("error");
 				vista.addObject("error", "Ha habido un error con la web, por favor vuelva en 5 minutos.");
@@ -123,7 +129,7 @@ public class InicioSesionServicio {
 			return vista;
 		}
 
-		String url = "http://localhost:8081/api/usuario/inicioSesion";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/usuario/inicioSesion";
 
 		try (Client cliente = ClientBuilder.newClient()) {
 			usuario.setContraseniaUsu(utilidades.encriptarASHA256(usuario.getContraseniaUsu()));
@@ -143,7 +149,10 @@ public class InicioSesionServicio {
 					&& usuarioPerfil.getCorreoElectronicoUsu().equals(usuario.getCorreoElectronicoUsu())) {
 				sesion.setAttribute("Usuario", usuarioPerfil);
 				sesion.setMaxInactiveInterval(60 * 60 * 24 * 7);
-				vista = servicioGrupos.obtenerLosGruposTops();
+				ModelAndView gruposVista = servicioGrupos.obtenerLosGruposTops();
+				vista.addAllObjects(gruposVista.getModel());
+				ModelAndView comentariosVista = servicioComentarios.recogidaDeComentariosIndex();
+				vista.addAllObjects(comentariosVista.getModel());
 				vista.setViewName("LandinPage");
 			} else {
 				vista.setViewName("InicioSesion");
@@ -165,7 +174,7 @@ public class InicioSesionServicio {
 	 * @return
 	 */
 	public boolean enviarCorreoRecuperacion(String correo) {
-		String url = "http://localhost:8081/api/usuario/recuperarContrasena";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/usuario/recuperarContrasena";
 
 		try (Client cliente = ClientBuilder.newClient()) {
 			Map<String, String> datos = new HashMap<>();
@@ -196,7 +205,7 @@ public class InicioSesionServicio {
 	 * @return
 	 */
 	public boolean realizarCambioContrasena(String token, String nuevaContrasena) {
-		String url = "http://localhost:8081/api/usuario/cambiarContrasena";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/usuario/cambiarContrasena";
 
 		try (Client cliente = ClientBuilder.newClient()) {
 			Map<String, String> datos = new HashMap<>();
@@ -238,11 +247,7 @@ public class InicioSesionServicio {
 			if (userInfo == null) {
 				return manejarError(vista, "Error al obtener datos del usuario.");
 			}
-
-			// Crear DTO de registro
 			UsuarioRegistroDto usuarioNuevo = crearUsuarioRegistroDto(userInfo);
-
-			// Registrar usuario en nuestra API
 			Response respuestaApi = registrarUsuarioEnApi(cliente, usuarioNuevo);
 			if (respuestaApi.getStatus() != Response.Status.OK.getStatusCode()) {
 				return manejarError(vista, "Error al registrar el usuario en la plataforma.");
@@ -329,7 +334,7 @@ public class InicioSesionServicio {
 	 * @throws JsonProcessingException
 	 */
 	private Response registrarUsuarioEnApi(Client cliente, UsuarioRegistroDto usuario) throws JsonProcessingException {
-		String urlApi = "http://localhost:8081/api/usuario/googleLogin";
+		String urlApi = RutasGenericas.rutaPrincipalApiString + "api/usuario/googleLogin";
 		String usuarioJson = new ObjectMapper().writeValueAsString(usuario);
 
 		return cliente.target(urlApi).request(MediaType.APPLICATION_JSON)
@@ -347,6 +352,10 @@ public class InicioSesionServicio {
 	private void manejarRegistroExitoso(Response respuestaApi, HttpSession sesion, ModelAndView vista) {
 		sesion.setAttribute("Usuario", respuestaApi.readEntity(UsuarioPerfilDto.class));
 		sesion.setMaxInactiveInterval(60 * 60 * 24 * 7);
+		ModelAndView gruposVista = servicioGrupos.obtenerLosGruposTops();
+		vista.addAllObjects(gruposVista.getModel());
+		ModelAndView comentariosVista = servicioComentarios.recogidaDeComentariosIndex();
+		vista.addAllObjects(comentariosVista.getModel());
 		vista.setViewName("LandinPage");
 		vista.addObject("infoVerificacion", "¡¡Bienvenido usuario!!");
 	}
@@ -402,7 +411,7 @@ public class InicioSesionServicio {
 	 * @return
 	 */
 	private List<String> obtenerTodosLosAlias() {
-		String API_URL_ALIAS = "http://localhost:8081/api/usuario/alias";
+		String API_URL_ALIAS = RutasGenericas.rutaPrincipalApiString + "api/usuario/alias";
 		try (Client cliente = ClientBuilder.newClient()) {
 			WebTarget target = cliente.target(API_URL_ALIAS);
 			return target.request(MediaType.APPLICATION_JSON).get(new GenericType<List<String>>() {

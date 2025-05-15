@@ -124,8 +124,8 @@
 						<div class="ContenedorDatosPerfil">
 							<a href="<%=request.getContextPath()%>/CerrarSesion"><button
 									class="hacersePremiumBoton botonNavegador">Cerrar</button></a>
-							<button class="hacersePremiumBoton botonNavegador"
-								onclick="alertaDelPremium()">Premium</button>
+							<!--  <button class="hacersePremiumBoton botonNavegador"
+								onclick="alertaDelPremium()">Premium</button>-->
 						</div>
 					</div>
 
@@ -456,8 +456,8 @@
 										class="hacersePremiumBoton2 botonNavegador">Cerrar</button></a>
 							</div>
 							<div class="divBoton">
-								<button class="hacersePremiumBoton2 botonNavegador"
-									onclick="alertaDelPremium()">Premium</button>
+								<!--  <button class="hacersePremiumBoton2 botonNavegador"
+									onclick="alertaDelPremium()">Premium</button>-->
 							</div>
 						</div>
 					</div>

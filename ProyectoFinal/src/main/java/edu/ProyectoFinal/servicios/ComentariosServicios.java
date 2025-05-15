@@ -7,7 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.ProyectoFinal.Configuraciones.RutasGenericas;
 import edu.ProyectoFinal.Dto.ComentariosDTO;
+import edu.ProyectoFinal.Dto.ComentariosIndexDto;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
@@ -21,6 +23,71 @@ import jakarta.ws.rs.core.Response;
 public class ComentariosServicios {
 
 	/**
+	 * Metodo para recoger los comentarios dde la pagina inicial de la aplicacion
+	 * 
+	 * @author jpribio - 15/05/25
+	 * @return
+	 */
+	public ModelAndView recogidaDeComentariosIndex() {
+		ModelAndView vista = new ModelAndView();
+		String url = RutasGenericas.rutaPrincipalApiString + "api/index/comentarios";
+		try {
+			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
+
+			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
+				List<ComentariosIndexDto> listaComentarios = listadoComentariosIndex(respuestaApi);
+				vista.addObject("listaComentariosIndex", listaComentarios);
+
+				if (listaComentarios.isEmpty()) {
+					vista.addObject("mensajeComentario", "No se encontraron comentarios de bienvenida.");
+				}
+			} else {
+				vista.addObject("error",
+						"Error al obtener los comentarios: " + respuestaApi.getStatusInfo().toString());
+			}
+		} catch (Exception e) {
+			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+		}
+
+		return vista;
+	}
+
+	/**
+	 * MEtodo privado para meterlo en el dto lo que le llegue del json
+	 * 
+	 * @author jpribio - 15/05/25
+	 * @param respuestaApi
+	 * @return
+	 */
+	private List<ComentariosIndexDto> listadoComentariosIndex(Response respuestaApi) {
+		List<ComentariosIndexDto> listaComentarios = new ArrayList<>();
+
+		try {
+			String jsonString = respuestaApi.readEntity(String.class);
+			JSONObject jsonResponse = new JSONObject(jsonString);
+			JSONArray comentariosArray = jsonResponse.optJSONArray("comentarios");
+			if (comentariosArray != null) {
+				for (int i = 0; i < comentariosArray.length(); i++) {
+					JSONObject jsonComentario = comentariosArray.getJSONObject(i);
+					ComentariosIndexDto dto = new ComentariosIndexDto();
+
+					dto.setAliasUsuarioComentario(jsonComentario.optString("aliasUsuarioComentario", ""));
+					dto.setComentarioTexto(jsonComentario.optString("comentarioTexto", ""));
+					dto.setImagenUsuario(jsonComentario.optString("imagenUsuario", null));
+
+					listaComentarios.add(dto);
+				}
+			} else {
+				System.out.println("No se encontró el array 'comentarios' en la respuesta JSON.");
+			}
+		} catch (Exception e) {
+			System.err.println("Error al parsear la respuesta JSON: " + e.getMessage());
+		}
+
+		return listaComentarios;
+	}
+
+	/**
 	 * MEtodo para recoger los comentarios
 	 * 
 	 * @author jpribio - 16/04/25
@@ -29,7 +96,7 @@ public class ComentariosServicios {
 	 */
 	public ModelAndView recogidaDeComentarios(HttpSession sesionInicaida) {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/RecogerComentarios";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/RecogerComentarios";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();

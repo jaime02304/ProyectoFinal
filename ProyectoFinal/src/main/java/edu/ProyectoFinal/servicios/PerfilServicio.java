@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.ProyectoFinal.Configuraciones.RutasGenericas;
 import edu.ProyectoFinal.Dto.ComentariosPerfilDto;
 import edu.ProyectoFinal.Dto.GruposDto;
 import edu.ProyectoFinal.Dto.GruposListadoDto;
@@ -49,7 +50,7 @@ public class PerfilServicio {
 	 */
 	public ModelAndView busquedaDelComentarioDelUsuario(UsuarioPerfilDto usuarioParaBuscar) {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/perfil/comentario";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/perfil/comentario";
 
 		try (Client cliente = ClientBuilder.newClient()) {
 			String usuarioJson = new ObjectMapper().writeValueAsString(usuarioParaBuscar);
@@ -113,7 +114,7 @@ public class PerfilServicio {
 	 */
 	public ModelAndView obtenerGruposDelUsuario(UsuarioPerfilDto ususarioParaFiltrar) {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/perfil/grupos";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/perfil/grupos";
 
 		try {
 			String usuarioJson = new ObjectMapper().writeValueAsString(ususarioParaFiltrar);
@@ -146,7 +147,7 @@ public class PerfilServicio {
 	 */
 	public ModelAndView obtenerGruposParaAdmin() {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/grupos";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/grupos";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
@@ -177,7 +178,7 @@ public class PerfilServicio {
 	 */
 	public ModelAndView obtenerUsuariosRolUser() {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/usuariosPerfil";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/usuariosPerfil";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
@@ -207,7 +208,7 @@ public class PerfilServicio {
 	 */
 	public ModelAndView obtenerUsuariosParaSAdmin() {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/usuarioSAdminPerfil";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/usuarioSAdminPerfil";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
@@ -322,7 +323,7 @@ public class PerfilServicio {
 	 * @return
 	 */
 	public ResponseEntity<?> modificarUsuario(UsuarioPerfilDto usuarioAModificar, HttpSession sesion) {
-		String url = "http://localhost:8081/api/ModificarUsuario";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/ModificarUsuario";
 
 		try {
 			// Obtener el usuario actual de la sesión y combinarlo con los datos a modificar
@@ -365,7 +366,7 @@ public class PerfilServicio {
 	 * @return
 	 */
 	public ResponseEntity<?> enviarElementoParaBorrar(eliminarElementoPerfilDto eliminarElemento, HttpSession sesion) {
-		String url = "http://localhost:8081/api/EliminarElemento";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/EliminarElemento";
 
 		try {
 			// Convertir el objeto a JSON para enviarlo a la API
@@ -407,7 +408,7 @@ public class PerfilServicio {
 	 */
 	public ResponseEntity<Map<String, Object>> enviarUsuarioAModificarComoAdmin(UsuarioPerfilDto usuarioAModificar,
 			HttpSession sesion) {
-		String url = "http://localhost:8081/api/ModificarUsuarioComoAdmin";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/ModificarUsuarioComoAdmin";
 		Map<String, Object> responseMap = new HashMap<>();
 
 		try {
@@ -448,7 +449,7 @@ public class PerfilServicio {
 	 */
 	public ResponseEntity<Map<String, Object>> enviarGrupoAModificarComoAdmin(GruposListadoDto grupoAModificar,
 			HttpSession sesion) {
-		String url = "http://localhost:8081/api/ModificarGrupoComoAdmin";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/ModificarGrupoComoAdmin";
 		Map<String, Object> responseMap = new HashMap<>();
 
 		try {
@@ -486,7 +487,7 @@ public class PerfilServicio {
 	public ResponseEntity<Map<String, Object>> crearUsuarioComoAdmin(UsuarioPerfilDto usuarioCreado,
 			HttpSession sesion) {
 		Map<String, Object> responseMap = new HashMap<>();
-		String url = "http://localhost:8081/api/CrearUsuarioComoAdmin";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/CrearUsuarioComoAdmin";
 
 		try {
 			// Convertir el objeto a JSON para enviarlo a la API
@@ -531,7 +532,7 @@ public class PerfilServicio {
 	 * @return
 	 */
 	public ResponseEntity<?> crearGrupoComoAdmin(GruposDto grupoCreado, HttpSession sesion) {
-		String url = "http://localhost:8081/api/CrearGrupoComoAdmin";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/CrearGrupoComoAdmin";
 
 		try {
 			// Convertir el objeto a JSON para enviarlo a la API
@@ -578,7 +579,7 @@ public class PerfilServicio {
 	 * @return
 	 */
 	public ResponseEntity<?> crearComentarioPerfil(ComentariosPerfilDto nuevoComentarios, HttpSession sesion) {
-		String url = "http://localhost:8081/api/CrearComentarioPerfil";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/CrearComentarioPerfil";
 		try {
 			String comentarioJson = new ObjectMapper().writeValueAsString(nuevoComentarios);
 

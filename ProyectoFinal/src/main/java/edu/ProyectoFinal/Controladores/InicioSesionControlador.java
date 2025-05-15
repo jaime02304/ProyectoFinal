@@ -11,7 +11,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.ProyectoFinal.Configuraciones.OAuthConfiguracion;
 import edu.ProyectoFinal.Configuraciones.SesionLogger;
+import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.Dto.UsuarioRegistroDto;
+import edu.ProyectoFinal.servicios.ComentariosServicios;
+import edu.ProyectoFinal.servicios.GruposServicios;
 import edu.ProyectoFinal.servicios.InicioSesionServicio;
 import jakarta.servlet.http.HttpSession;
 
@@ -22,6 +25,10 @@ public class InicioSesionControlador {
 
 	InicioSesionServicio servicioDeInicioDeSesion = new InicioSesionServicio();
 
+	GruposServicios servicioGrupos = new GruposServicios();
+
+	ComentariosServicios servicioComentarios = new ComentariosServicios();
+
 	/**
 	 * Metodo que devuelve la vista del index y da alta el nuevo usuario
 	 * 
@@ -29,8 +36,17 @@ public class InicioSesionControlador {
 	 * @return
 	 */
 	@GetMapping("/InicioSesion")
-	public ModelAndView InicioSesionVista() {
+	public ModelAndView InicioSesionVista(HttpSession sesionIniciada) {
 		try {
+			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
+			if (usuario != null) {
+				ModelAndView errorVista = new ModelAndView("LandinPage");
+				ModelAndView gruposVista = servicioGrupos.obtenerLosGruposTops();
+				errorVista.addAllObjects(gruposVista.getModel());
+				ModelAndView comentariosVista = servicioComentarios.recogidaDeComentariosIndex();
+				errorVista.addAllObjects(comentariosVista.getModel());
+				return errorVista;
+			}
 			logger.info("Cargando la vista de inicio de sesión");
 			ModelAndView vista = new ModelAndView("InicioSesion");
 			return vista;

@@ -25,160 +25,54 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 });
 
-// PARTE DEL CARRUSEL
-const usuarios = [
-	{
-		nombre: "Juan",
-		imagen: "imagenes/artbreeder-image-2024-12-14T13_53_57.670Z.jpeg",
-		texto: "Hola, soy Juan. ¡Encantado de conocerte!",
-		meGusta: 0,
-		leGusta: false,
-	},
-	{
-		nombre: "Maria",
-		imagen: "imagenes/artbreeder-image-2024-12-14T13_53_57.670Z.jpeg",
-		texto: "Soy María y me encanta la programación.",
-		meGusta: 0,
-		leGusta: false,
-	},
-	{
-		nombre: "Carlos",
-		imagen: "imagenes/artbreeder-image-2024-12-14T13_53_57.670Z.jpeg",
-		texto:
-			"Hola, soy Carlos. Disfruto aprender cosas nuevas jadvn j bnb dhuhfuhbvfvhf hsdavhhguoashvhasuodhvsah suhadouvhasovhasouhasudhv duhgasudhaouhaughqdhiasdhgisduhg",
-		meGusta: 0,
-		leGusta: false,
-	},
-];
 
-// function obtenerUsuarios() {
-//     return fetch('https://example.com/api/usuarios') // Cambiar URL
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Error al obtener los usuarios');
-//             }
-//             return response.json();
-//         });
-// }
-// let usuarios = [];
+// Índices independientes para cada carrusel
+var idx1 = 0, idx2 = 0, idx3 = 0;
+// 'comentarios' vendrá del JSP; si no existe, se inicializa a array vacío
+var comentariosIndex = window.comentariosIndex || [];
 
-let indiceActual = 1;
-let indiceActual2 = 1;
-let indiceActual3 = 1;
-
-// Función genérica para actualizar carruseles
-templateActualizarCarrusel = (
-	indice,
-	claseTitulo,
-	claseImagen,
-	claseTexto,
-	claseBoton,
-	usuario
-) => {
-	document.querySelector(claseTitulo).textContent = usuario.nombre;
-	document.querySelector(claseImagen).src = usuario.imagen;
-	document.querySelector(claseTexto).textContent = usuario.texto;
-
-	const botonCorazon = document.querySelector(claseBoton);
-	botonCorazon.classList.toggle("clicado", usuario.leGusta);
-
-	botonCorazon.replaceWith(botonCorazon.cloneNode(true));
-	const nuevoBotonCorazon = document.querySelector(claseBoton);
-
-	nuevoBotonCorazon.addEventListener("click", function() {
-		usuario.leGusta = !usuario.leGusta;
-		usuario.meGusta += usuario.leGusta ? 1 : -1;
-		nuevoBotonCorazon.classList.toggle("clicado", usuario.leGusta);
-	});
-};
-
-function actualizarCarrusel() {
-	templateActualizarCarrusel(
-		indiceActual,
-		".titulo-usuario",
-		".imagen-usuario",
-		".texto-usuario",
-		".corazonBoton",
-		usuarios[indiceActual]
-	);
+/**
+ * Rellena el carrusel con prefijo '' | '2' | '3' en la posición idx
+ */
+function renderCarrusel(prefijo, idx) {
+	if (!comentariosIndex.length) return;
+	var c = comentariosIndex[idx];
+	document.getElementById('titulo-usuario' + prefijo).textContent = c.alias;
+	document.getElementById('imagen-usuario' + prefijo).src = c.imagenUrl;
+	document.getElementById('texto-usuario' + prefijo).textContent = c.texto;
 }
 
-function actualizarCarrusel2() {
-	templateActualizarCarrusel(
-		indiceActual2,
-		".titulo-usuario2",
-		".imagen-usuario2",
-		".texto-usuario2",
-		".corazonBoton2",
-		usuarios[indiceActual2]
-	);
+/** Actualiza el índice “anterior” y refresca */
+function anterior(prefijo) {
+	switch (prefijo) {
+		case '': idx1 = (idx1 - 1 + comentariosIndex.length) % comentariosIndex.length; break;
+		case '2': idx2 = (idx2 - 1 + comentariosIndex.length) % comentariosIndex.length; break;
+		case '3': idx3 = (idx3 - 1 + comentariosIndex.length) % comentariosIndex.length; break;
+	}
+	renderCarrusel(prefijo, { '': idx1, '2': idx2, '3': idx3 }[prefijo]);
 }
 
-function actualizarCarrusel3() {
-	templateActualizarCarrusel(
-		indiceActual3,
-		".titulo-usuario3",
-		".imagen-usuario3",
-		".texto-usuario3",
-		".corazonBoton3",
-		usuarios[indiceActual3]
-	);
+/** Actualiza el índice “siguiente” y refresca */
+function siguiente(prefijo) {
+	switch (prefijo) {
+		case '': idx1 = (idx1 + 1) % comentariosIndex.length; break;
+		case '2': idx2 = (idx2 + 1) % comentariosIndex.length; break;
+		case '3': idx3 = (idx3 + 1) % comentariosIndex.length; break;
+	}
+	renderCarrusel(prefijo, { '': idx1, '2': idx2, '3': idx3 }[prefijo]);
 }
 
-function usuarioSiguiente() {
-	indiceActual = (indiceActual + 1) % usuarios.length;
-	actualizarCarrusel();
-}
+// Wrappers que usan tus nombres de función en los botones
+function usuarioAnterior() { anterior(''); }
+function usuarioSiguiente() { siguiente(''); }
+function usuarioAnterior2() { anterior('2'); }
+function usuarioSiguiente2() { siguiente('2'); }
+function usuarioAnterior3() { anterior('3'); }
+function usuarioSiguiente3() { siguiente('3'); }
 
-function usuarioAnterior() {
-	indiceActual = (indiceActual - 1 + usuarios.length) % usuarios.length;
-	actualizarCarrusel();
-}
-
-function usuarioSiguiente2() {
-	indiceActual2 = (indiceActual2 + 1) % usuarios.length;
-	actualizarCarrusel2();
-}
-
-function usuarioAnterior2() {
-	indiceActual2 = (indiceActual2 - 1 + usuarios.length) % usuarios.length;
-	actualizarCarrusel2();
-}
-
-function usuarioSiguiente3() {
-	indiceActual3 = (indiceActual3 + 1) % usuarios.length;
-	actualizarCarrusel3();
-}
-
-function usuarioAnterior3() {
-	indiceActual3 = (indiceActual3 - 1 + usuarios.length) % usuarios.length;
-	actualizarCarrusel3();
-}
-
-// Inicializar carruseles con datos del servidor
-// obtenerUsuarios()
-//   .then((data) => {
-//     usuarios = data;
-//     if (usuarios.length > 0) {
-//       actualizarCarrusel();
-//       actualizarCarrusel2();
-//       actualizarCarrusel3();
-
-//       // Configurar intervalos para avanzar automáticamente
-//       let intervaloCarrusel = setInterval(usuarioSiguiente, 6000);
-//       let intervaloCarrusel2 = setInterval(usuarioSiguiente2, 6000);
-//       let intervaloCarrusel3 = setInterval(usuarioSiguiente3, 6000);
-
-//       // Detener intervalos al hacer clic en los botones
-//       document.querySelector(".botones").addEventListener("click", () => {
-//         clearInterval(intervaloCarrusel);
-//         clearInterval(intervaloCarrusel2);
-//         clearInterval(intervaloCarrusel3);
-//       });
-//     } else {
-//       console.error("No se encontraron usuarios en la respuesta.");
-//     }
-//   })
-//   .catch((error) => {
-//     console.error("Error al inicializar los carruseles:", error);
-//   });
+// Al cargar el DOM, inicializamos cada carrusel en la posición 0
+document.addEventListener('DOMContentLoaded', function() {
+	renderCarrusel('', 0);
+	renderCarrusel('2', 0);
+	renderCarrusel('3', 0);
+});

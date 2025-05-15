@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.ProyectoFinal.Configuraciones.RutasGenericas;
 import edu.ProyectoFinal.Dto.GrupoCompletoDto;
 import edu.ProyectoFinal.Dto.GrupoEspecificadoDto;
 import edu.ProyectoFinal.Dto.GruposListadoDto;
@@ -41,7 +42,7 @@ public class GruposServicios {
 	 */
 	public ModelAndView obtenerLosGruposTops() {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/index/grupos";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/index/grupos";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
@@ -117,7 +118,7 @@ public class GruposServicios {
 	 */
 	public ModelAndView recogidaDeGrupos(HttpSession sesionIniciada) {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/RecogerGruposTotales";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/RecogerGruposTotales";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
@@ -147,7 +148,7 @@ public class GruposServicios {
 	 * @return
 	 */
 	public ResponseEntity<String> enviarSuscripcion(SuscripcionDto suscripcion) {
-		String API_URL = "http://localhost:8081/api/UnirmeAlGrupo";
+		String API_URL = RutasGenericas.rutaPrincipalApiString + "api/UnirmeAlGrupo";
 		try (Client cliente = ClientBuilder.newClient()) {
 			String suscripcionJson = new ObjectMapper().writeValueAsString(suscripcion);
 
@@ -170,7 +171,7 @@ public class GruposServicios {
 	}
 
 	public ResponseEntity<String> enviarEliminacionSuscripcion(SuscripcionDto suscripcion) {
-		String API_URL = "http://localhost:8081/api/AbandonarGrupo";
+		String API_URL = RutasGenericas.rutaPrincipalApiString + "api/AbandonarGrupo";
 		try (Client cliente = ClientBuilder.newClient()) {
 			String suscripcionJson = new ObjectMapper().writeValueAsString(suscripcion);
 
@@ -202,7 +203,7 @@ public class GruposServicios {
 	 */
 	public ModelAndView verGrupoEspecificado(HttpSession sesionIniciada, GrupoEspecificadoDto grupoEspecificado) {
 		ModelAndView vista = new ModelAndView();
-		String url = "http://localhost:8081/api/VerGrupoEspecificado";
+		String url = RutasGenericas.rutaPrincipalApiString + "api/VerGrupoEspecificado";
 
 		try (Client cliente = ClientBuilder.newClient()) {
 			String grupoEspecificoJson = new ObjectMapper().writeValueAsString(grupoEspecificado);

@@ -148,6 +148,10 @@ a {
 	transition: box-shadow 0.5s ease;
 }
 
+#activoBotonIdentificado{
+	box-shadow: 5px 5px 15px rgb(255, 103, 15), -5px -5px 15px
+		rgb(255, 103, 15);
+}
 .botonUser {
 	font-family: "Bangers", sans-serif;
 	width: 150px;
