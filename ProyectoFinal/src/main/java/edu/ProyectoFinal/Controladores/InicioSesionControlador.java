@@ -1,8 +1,10 @@
 package edu.ProyectoFinal.Controladores;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,15 +13,22 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.ProyectoFinal.Configuraciones.OAuthConfiguracion;
 import edu.ProyectoFinal.Configuraciones.SesionLogger;
+import edu.ProyectoFinal.Dto.ComentariosIndexDto;
+import edu.ProyectoFinal.Dto.GruposListadoDto;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.Dto.UsuarioRegistroDto;
 import edu.ProyectoFinal.servicios.ComentariosServicios;
 import edu.ProyectoFinal.servicios.GruposServicios;
 import edu.ProyectoFinal.servicios.InicioSesionServicio;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@Controller
-public class InicioSesionControlador {
+@WebServlet("/InicioSesion")
+public class InicioSesionControlador extends HttpServlet {
 
 	private static final SesionLogger logger = new SesionLogger(InicioSesionControlador.class);
 
@@ -35,68 +44,41 @@ public class InicioSesionControlador {
 	 * @author jpribio - 27/01/25
 	 * @return
 	 */
-	@GetMapping("/InicioSesion")
-	public ModelAndView InicioSesionVista(HttpSession sesionIniciada) {
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
 		try {
-			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
+			HttpSession sesion = request.getSession();
+			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesion.getAttribute("Usuario");
+
 			if (usuario != null) {
-				ModelAndView errorVista = new ModelAndView("LandinPage");
-				ModelAndView gruposVista = servicioGrupos.obtenerLosGruposTops();
-				errorVista.addAllObjects(gruposVista.getModel());
-				ModelAndView comentariosVista = servicioComentarios.recogidaDeComentariosIndex();
-				errorVista.addAllObjects(comentariosVista.getModel());
-				return errorVista;
+				List<GruposListadoDto> listaGrupos = servicioGrupos.obtenerLosGruposTops();
+				List<ComentariosIndexDto> listaComentarios = servicioComentarios.recogidaDeComentariosIndex();
+
+				request.setAttribute("listaGrupos", listaGrupos);
+				request.setAttribute("listaComentariosIndex", listaComentarios);
+
+				if (listaGrupos.isEmpty()) {
+					request.setAttribute("mensajeGrupo", "No se encontraron grupos disponibles.");
+				}
+
+				if (listaComentarios.isEmpty()) {
+					request.setAttribute("mensajeComentario", "No se encontraron comentarios de bienvenida.");
+				}
+
+				logger.info("Usuario ya logueado. Cargando LandinPage con datos.");
+				request.getRequestDispatcher("/LandinPage.jsp").forward(request, response);
+				return;
 			}
-			logger.info("Cargando la vista de inicio de sesión");
-			ModelAndView vista = new ModelAndView("InicioSesion");
-			return vista;
-		} catch (Exception e) {
-			logger.error("Error al cargar la página de inicio de sesión\n" + e);
-			ModelAndView vista = new ModelAndView("InicioSesion");
-			vista.addObject("error", "Error al cargar la pagina inicial.");
-			vista.setViewName("error");
-			return vista;
-		}
-	}
 
-	/**
-	 * Metodo que registra a un nuevo sesion
-	 * 
-	 * @author jpribio - 27/01/25
-	 * @return
-	 */
-	@PostMapping("/Registro")
-	public ModelAndView registroUsuario(@ModelAttribute UsuarioRegistroDto nuevoUsuario, HttpSession sesionIniciada) {
-		try {
-			logger.info("Intentando registrar el usuario: " + nuevoUsuario.getCorreoElectronicoUsu());
-			return servicioDeInicioDeSesion.nuevoUsuario(nuevoUsuario, sesionIniciada);
-		} catch (Exception e) {
-			logger.error("Error en el registro de usuario: " + nuevoUsuario.getCorreoElectronicoUsu());
-			ModelAndView vista = new ModelAndView("error");
-			vista.addObject("error", "Error al registrar usuario. Inténtelo más tarde.");
-			return vista;
-		}
-	}
+			logger.info("Cargando la vista de inicio de sesión.");
+			request.getRequestDispatcher("/InicioSesion.jsp").forward(request, response);
 
-	/**
-	 * Metodo que inicia sesion
-	 * 
-	 * @author jpribio - 27/01/25
-	 * @return
-	 */
-	@PostMapping("/IS")
-	public ModelAndView inicioSesionUsuario(@ModelAttribute UsuarioRegistroDto buscarUsuario,
-			HttpSession sesionIniciada) {
-		try {
-			logger.info("Intentando iniciar sesión para el usuario: " + buscarUsuario.getCorreoElectronicoUsu());
-			ModelAndView vista = new ModelAndView();
-			vista = servicioDeInicioDeSesion.inicioSesion(buscarUsuario, sesionIniciada);
-			return vista;
 		} catch (Exception e) {
-			logger.error("Error al iniciar sesión para el usuario: " + buscarUsuario.getCorreoElectronicoUsu());
-			ModelAndView vista = new ModelAndView("InicioSesion");
-			vista.addObject("error", "Error al iniciar sesión. Inténtelo de nuevo.");
-			return vista;
+			logger.error("Error al cargar la página de inicio de sesión.\n" + e);
+			request.setAttribute("error", "Error al cargar la página de inicio.");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
 	}
 

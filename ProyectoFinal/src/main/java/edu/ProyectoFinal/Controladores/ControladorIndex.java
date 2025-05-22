@@ -1,23 +1,26 @@
 package edu.ProyectoFinal.Controladores;
 
 import java.io.IOException;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
+import java.util.List;
 
 import edu.ProyectoFinal.Configuraciones.SesionLogger;
+import edu.ProyectoFinal.Dto.ComentariosIndexDto;
+import edu.ProyectoFinal.Dto.GruposListadoDto;
 import edu.ProyectoFinal.servicios.ComentariosServicios;
 import edu.ProyectoFinal.servicios.GruposServicios;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Controlador de la vista principal
  * 
  * @author jpribio - 23/01/25
  */
-@Controller
-public class ControladorIndex {
+@WebServlet(value = "/LandinPage/*")
+public class ControladorIndex extends HttpServlet {
 
 	private static final SesionLogger logger = new SesionLogger(ControladorIndex.class);
 
@@ -31,26 +34,27 @@ public class ControladorIndex {
 	 * @return devuelve la vista y los metodos equivalentes
 	 * @throws IOException
 	 */
-	@GetMapping("/")
-	protected ModelAndView index(HttpSession sesionIniciada) {
-		ModelAndView vista = new ModelAndView();
-
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		try {
-			vista.setViewName("LandinPage");
-			ModelAndView gruposVista = serviciosGrupos.obtenerLosGruposTops();
-			vista.addAllObjects(gruposVista.getModel());
-			ModelAndView comentariosVista = servicioComentario.recogidaDeComentariosIndex();
-			vista.addAllObjects(comentariosVista.getModel());
+			List<GruposListadoDto> listaGrupos = serviciosGrupos.obtenerLosGruposTops();
+			List<ComentariosIndexDto> listaComentarios = servicioComentario.recogidaDeComentariosIndex(); 
+			request.setAttribute("listaGrupos", listaGrupos);
 
-			logger.info("Grupos y comentarios cargados correctamente.");
+			if (listaGrupos.isEmpty()) {
+				request.setAttribute("mensajeGrupo", "No se encontraron grupos disponibles.");
+			}
+
+			request.setAttribute("listaComentariosIndex", listaComentarios);
+
+			request.getRequestDispatcher("/LandinPage.jsp").forward(request, response);
+
 		} catch (Exception e) {
 			logger.error("Error al cargar la página inicial.\n" + e);
-			vista.setViewName("error");
-			vista.addObject("error", "Error al cargar la página inicial.");
-			logger.warn("Se produjo un error al cargar la página inicial.");
+			request.setAttribute("error", "Error al cargar la página inicial.");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
-
-		return vista;
 	}
 
 }

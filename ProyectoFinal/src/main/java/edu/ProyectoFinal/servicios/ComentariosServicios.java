@@ -28,28 +28,20 @@ public class ComentariosServicios {
 	 * @author jpribio - 15/05/25
 	 * @return
 	 */
-	public ModelAndView recogidaDeComentariosIndex() {
-		ModelAndView vista = new ModelAndView();
+	public List<ComentariosIndexDto> recogidaDeComentariosIndex() throws Exception {
 		String url = RutasGenericas.rutaPrincipalApiString + "api/index/comentarios";
+
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
 
 			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<ComentariosIndexDto> listaComentarios = listadoComentariosIndex(respuestaApi);
-				vista.addObject("listaComentariosIndex", listaComentarios);
-
-				if (listaComentarios.isEmpty()) {
-					vista.addObject("mensajeComentario", "No se encontraron comentarios de bienvenida.");
-				}
+				return listadoComentariosIndex(respuestaApi);
 			} else {
-				vista.addObject("error",
-						"Error al obtener los comentarios: " + respuestaApi.getStatusInfo().toString());
+				throw new RuntimeException("Error al obtener los comentarios: " + respuestaApi.getStatusInfo());
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			throw new RuntimeException("Error al conectar con la API: " + e.getMessage(), e);
 		}
-
-		return vista;
 	}
 
 	/**

@@ -61,35 +61,6 @@ public class GrupoControlador {
 		}
 	}
 
-	@GetMapping("/PaginaGrupoEspecificado2")
-	public ModelAndView paginaGrupoEspecificado(HttpSession sesionIniciada, RedirectAttributes redirectAttrs) {
-		try {
-			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
-			if (sesionIniciada == null || usuario == null) {
-				ModelAndView errorVista = new ModelAndView("error");
-				errorVista.addObject("error",
-						"No se ha detectado un usuario activo. Por favor, inicie sesión antes de continuar.");
-				return errorVista;
-			}
-			if (usuario.getEsVerificadoEntidad() == false) {
-				ModelAndView vista = new ModelAndView("redirect:/");
-				redirectAttrs.addFlashAttribute("infoVerificacion",
-						"No se ha detectado un usuario verificado. Por favor, debe de verificarse antes de continuar.");
-				return vista;
-			}
-			logger.info("Cargando la vista de grupos especificado");
-			ModelAndView vista = new ModelAndView();
-			vista.setViewName("GrupoEspecifico");
-			return vista;
-		} catch (Exception e) {
-			logger.error("Error al cargar la página del grupo especificado\n" + e);
-			ModelAndView vista = new ModelAndView("GrupoPagina");
-			vista.addObject("error", "Error al cargar la comentarios.");
-			vista.setViewName("error");
-			return vista;
-		}
-	}
-
 	/**
 	 * Metodo que recoge toda la informacion del grupo especificado
 	 * 
@@ -158,26 +129,24 @@ public class GrupoControlador {
 		}
 
 	}
-	
+
 	@PostMapping("/EliminarDelGrupo")
-	public ResponseEntity<?> eliminarDelGrupo(@ModelAttribute SuscripcionDto suscripcion,
-	                                          HttpSession sesionIniciada) {
-	    UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
-	    if (usuario == null) {
-	        return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body("Usuario no autenticado.");
-	    }
+	public ResponseEntity<?> eliminarDelGrupo(@ModelAttribute SuscripcionDto suscripcion, HttpSession sesionIniciada) {
+		UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
+		if (usuario == null) {
+			return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body("Usuario no autenticado.");
+		}
 
-	    suscripcion.setAliasUsuario(usuario.getAliasUsu());
+		suscripcion.setAliasUsuario(usuario.getAliasUsu());
 
-	    try {
-	        logger.info("Enviando solicitud para eliminar suscripción del grupo.");
-	        return servicioDeGrupos.enviarEliminacionSuscripcion(suscripcion);
-	    } catch (Exception e) {
-	        logger.error("Error al procesar la eliminación de la suscripción");
-	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-	                .body("Error inesperado al procesar la eliminación.");
-	    }
+		try {
+			logger.info("Enviando solicitud para eliminar suscripción del grupo.");
+			return servicioDeGrupos.enviarEliminacionSuscripcion(suscripcion);
+		} catch (Exception e) {
+			logger.error("Error al procesar la eliminación de la suscripción");
+			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+					.body("Error inesperado al procesar la eliminación.");
+		}
 	}
-
 
 }

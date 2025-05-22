@@ -40,28 +40,20 @@ public class GruposServicios {
 	 * @throws Exception
 	 * @throws NullPointerException
 	 */
-	public ModelAndView obtenerLosGruposTops() {
-		ModelAndView vista = new ModelAndView();
+	public List<GruposListadoDto> obtenerLosGruposTops() throws Exception {
 		String url = RutasGenericas.rutaPrincipalApiString + "api/index/grupos";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
 
 			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<GruposListadoDto> listadoGruposCompletosTop = listadoGruposTop(respuestaApi);
-				vista.addObject("listaGrupos", listadoGruposCompletosTop);
-
-				if (listadoGruposCompletosTop.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron grupos disponibles.");
-				}
+				return listadoGruposTop(respuestaApi);
 			} else {
-				vista.addObject("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
+				throw new RuntimeException("Error al obtener los grupos: " + respuestaApi.getStatusInfo());
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			throw new RuntimeException("Error al conectar con la API: " + e.getMessage(), e);
 		}
-
-		return vista;
 	}
 
 	/**

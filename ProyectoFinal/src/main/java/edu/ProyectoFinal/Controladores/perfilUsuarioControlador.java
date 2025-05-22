@@ -247,7 +247,7 @@ public class perfilUsuarioControlador {
 		try {
 			logger.info("Cerrando sesión del usuario.");
 			cerrarSesion.invalidate();
-			vista = servicioGrupos.obtenerLosGruposTops();
+			//vista = servicioGrupos.obtenerLosGruposTops();
 			vista.setViewName("LandinPage");
 		} catch (Exception e) {
 			logger.error("Error al cerrar la sesión del usuario\n" + e);
