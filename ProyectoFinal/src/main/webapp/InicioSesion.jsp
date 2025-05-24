@@ -205,7 +205,8 @@
 					<div>
 						<label for="emailRecuperacion">Introduce tu correo
 							electrónico:</label> <input type="email" id="emailRecuperacion"
-							placeholder="ejemplo@correo.com" required>
+							name="correoElectronicoUsu" placeholder="ejemplo@correo.com"
+							required>
 					</div>
 					<div>
 						<button type="submit" class="recuperacion-button">Enviar</button>

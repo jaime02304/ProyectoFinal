@@ -4,11 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,7 +15,6 @@ import edu.ProyectoFinal.Dto.GrupoEspecificadoDto;
 import edu.ProyectoFinal.Dto.GruposListadoDto;
 import edu.ProyectoFinal.Dto.SuscripcionDto;
 import edu.ProyectoFinal.Dto.UsuarioDeGruposDto;
-import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -108,28 +104,28 @@ public class GruposServicios {
 	 * @param sesionIniciada
 	 * @return
 	 */
-	public ModelAndView recogidaDeGrupos(HttpSession sesionIniciada) {
-		ModelAndView vista = new ModelAndView();
-		String url = RutasGenericas.rutaPrincipalApiString + "api/RecogerGruposTotales";
+	public List<GrupoCompletoDto> obtenerGrupos() {
+		String URL_API = RutasGenericas.rutaPrincipalApiString + "api/RecogerGruposTotales";
+		List<GrupoCompletoDto> listaGrupos = new ArrayList<>();
+		Client client = ClientBuilder.newClient();
+		Response resp = null;
 
 		try {
-			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
+			resp = client.target(URL_API).request(MediaType.APPLICATION_JSON).get();
 
-			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<GrupoCompletoDto> listadoGrupos = listadoGrupos(respuestaApi);
-				vista.addObject("listadoGruposTotales", listadoGrupos);
-
-				if (listadoGrupos.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron grupos disponibles.");
-				}
-			} else {
-				vista.addObject("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
+			if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
+				System.err.println("Error al obtener los grupos: " + resp.getStatusInfo());
+				return listaGrupos;
 			}
+			listaGrupos = parsearListadoGrupos(resp);
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+		} finally {
+			if (resp != null)
+				resp.close();
+			client.close();
 		}
 
-		return vista;
+		return listaGrupos;
 	}
 
 	/**
@@ -139,49 +135,39 @@ public class GruposServicios {
 	 * @param suscripcion
 	 * @return
 	 */
-	public ResponseEntity<String> enviarSuscripcion(SuscripcionDto suscripcion) {
+	public boolean enviarSuscripcion(SuscripcionDto suscripcion) {
+		ObjectMapper mapper = new ObjectMapper();
 		String API_URL = RutasGenericas.rutaPrincipalApiString + "api/UnirmeAlGrupo";
 		try (Client cliente = ClientBuilder.newClient()) {
-			String suscripcionJson = new ObjectMapper().writeValueAsString(suscripcion);
-
-			Response respuestaApi = cliente.target(API_URL).request(MediaType.APPLICATION_JSON)
-					.post(Entity.entity(suscripcionJson, MediaType.APPLICATION_JSON));
-
-			int status = respuestaApi.getStatus();
-			String mensaje = respuestaApi.getHeaderString("mensaje");
-
-			if (mensaje == null) {
-				mensaje = "No se ha realizado la suscripcion correctamente";
-			}
-
-			return ResponseEntity.status(status).body(mensaje);
-
+			String json = mapper.writeValueAsString(suscripcion);
+			Response resp = cliente.target(API_URL).request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(json, MediaType.APPLICATION_JSON));
+			boolean ok = resp.getStatus() == Response.Status.OK.getStatusCode();
+			resp.close();
+			return ok;
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-					.body("Error al conectar con la API: " + e.getMessage());
+			return false;
 		}
 	}
 
-	public ResponseEntity<String> enviarEliminacionSuscripcion(SuscripcionDto suscripcion) {
+	/**
+	 * metodo para enviar la solicitud para borrarse del grupo
+	 * 
+	 * @author jpribio - 08/05/25
+	 * @param suscripcion
+	 * @return
+	 */
+	public boolean enviarEliminacionSuscripcion(SuscripcionDto suscripcion) {
 		String API_URL = RutasGenericas.rutaPrincipalApiString + "api/AbandonarGrupo";
 		try (Client cliente = ClientBuilder.newClient()) {
 			String suscripcionJson = new ObjectMapper().writeValueAsString(suscripcion);
-
 			Response respuestaApi = cliente.target(API_URL).request(MediaType.APPLICATION_JSON)
 					.post(Entity.entity(suscripcionJson, MediaType.APPLICATION_JSON));
-
 			int status = respuestaApi.getStatus();
-			String mensaje = respuestaApi.getHeaderString("mensaje");
-
-			if (mensaje == null) {
-				mensaje = "No se ha podido eliminar la suscripción correctamente.";
-			}
-
-			return ResponseEntity.status(status).body(mensaje);
+			return status >= 200 && status < 300;
 
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-					.body("Error al conectar con la API para eliminar la suscripción: " + e.getMessage());
+			return false;
 		}
 	}
 
@@ -193,44 +179,33 @@ public class GruposServicios {
 	 * @param grupoEspecificado
 	 * @return
 	 */
-	public ModelAndView verGrupoEspecificado(HttpSession sesionIniciada, GrupoEspecificadoDto grupoEspecificado) {
-		ModelAndView vista = new ModelAndView();
-		String url = RutasGenericas.rutaPrincipalApiString + "api/VerGrupoEspecificado";
+	public GrupoEspecificadoDto obtenerGrupoEspecifico(String nombreGrupo) {
+		String URL_ESPECIFICO = RutasGenericas.rutaPrincipalApiString + "api/VerGrupoEspecificado";
+		Client client = ClientBuilder.newClient();
+		GrupoEspecificadoDto resultado = null;
+		try {
+			JSONObject j = new JSONObject();
+			j.put("nombreGrupo", nombreGrupo);
+			Response resp = client.target(URL_ESPECIFICO).request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(j.toString(), MediaType.APPLICATION_JSON));
 
-		try (Client cliente = ClientBuilder.newClient()) {
-			String grupoEspecificoJson = new ObjectMapper().writeValueAsString(grupoEspecificado);
-			Response respuestaApi = cliente.target(url).request(MediaType.APPLICATION_JSON)
-					.post(Entity.entity(grupoEspecificoJson, MediaType.APPLICATION_JSON));
-
-			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				String jsonString = respuestaApi.readEntity(String.class);
-				JSONObject respuestaJson = new JSONObject(jsonString);
-				JSONObject grupoJson = respuestaJson.optJSONObject("grupoEspecifico");
-				if (grupoJson != null) {
-					GrupoEspecificadoDto dto = mapearGrupoEspecificado(grupoJson);
-					if (dto.getNombreGrupo() != null) {
-						vista.addObject("grupoEspecificado", dto);
-						vista.setViewName("GrupoEspecifico");
-					} else {
-						vista.addObject("error", "No se encontró el grupo especificado.");
-						vista.setViewName("error");
-					}
-				} else {
-					vista.addObject("error", "Respuesta inesperada: no venía ‘grupoEspecifico’");
-					vista.setViewName("error");
-				}
-
-			} else {
-				vista.addObject("error",
-						"Error en la API al buscar el grupo (código " + respuestaApi.getStatus() + ").");
-				vista.setViewName("error");
+			if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
+				resp.close();
+				return null;
+			}
+			String jsonString = resp.readEntity(String.class);
+			resp.close();
+			JSONObject root = new JSONObject(jsonString);
+			JSONObject grupoJson = root.optJSONObject("grupoEspecifico");
+			if (grupoJson != null) {
+				resultado = mapearGrupoEspecificado(grupoJson);
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
-			vista.setViewName("error");
+			System.err.println("Error en obtenerGrupoEspecifico: " + e.getMessage());
+		} finally {
+			client.close();
 		}
-
-		return vista;
+		return resultado;
 	}
 
 	/**
@@ -280,7 +255,7 @@ public class GruposServicios {
 	 * @param respuestaApi
 	 * @return
 	 */
-	private List<GrupoCompletoDto> listadoGrupos(Response respuestaApi) {
+	private List<GrupoCompletoDto> parsearListadoGrupos(Response respuestaApi) {
 		List<GrupoCompletoDto> listaGrupos = new ArrayList<>();
 
 		try {

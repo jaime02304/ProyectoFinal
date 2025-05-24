@@ -405,28 +405,27 @@ function enviarSolicitudUnirse() {
 		return;
 	}
 
-	var formData = new URLSearchParams();
-	formData.append("nombreGrupo", nombreGrupo);
+	const params = new URLSearchParams();
+	params.append("nombreGrupo", nombreGrupo);
 
-	var contextPath = window.location.pathname.split('/')[1];
+	const contextPath = window.location.pathname.split('/')[1];
+	const url = `/${contextPath}/UnirseAlGrupo`;
 
-	fetch("/" + contextPath + "/UnirseAlGrupo", {
+	fetch(url, {
 		method: "POST",
-		body: formData
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded"
+		},
+		body: params.toString()
 	})
-		.then(function(response) {
+		.then(response => {
 			if (response.ok) {
-				return response.text();
+				mostrarAlertaPersonalizada("Su suscripción ha sido válida");
 			} else {
-				mostrarAlertaPersonalizada("Su suscripciión ha sido denegada");
+				mostrarAlertaPersonalizada("Su suscripción ha sido denegada");
 			}
 		})
-		.then(function(mensaje) {
-			if (mensaje) {
-				mostrarAlertaPersonalizada("Su suscripciión ha sido totalmente valida");
-			}
-		})
-		.catch(function(error) {
+		.catch(error => {
 			console.error("Error en la solicitud:", error);
 			mostrarAlertaPersonalizada("Ocurrió un error inesperado.");
 		});
@@ -446,30 +445,28 @@ function enviarSolicitudEliminar() {
 		return;
 	}
 
-	var formData = new URLSearchParams();
-	formData.append("nombreGrupo", nombreGrupo);
+	const params = new URLSearchParams();
+	params.append("nombreGrupo", nombreGrupo);
 
 	var contextPath = window.location.pathname.split('/')[1];
 
 	fetch("/" + contextPath + "/EliminarDelGrupo", {
 		method: "POST",
-		body: formData
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded"
+		},
+		body: params.toString()
 	})
-		.then(function(response) {
+		.then(response => {
 			if (response.ok) {
-				return response.text();
+				mostrarAlertaPersonalizada("Te has eliminado del grupo correctamente.");
 			} else {
-				mostrarAlertaPersonalizada("Error al eliminar la suscripción del grupo.");
+				mostrarAlertaPersonalizada("No se pudo eliminar tu suscripción al grupo.");
 			}
 		})
-		.then(function(mensaje) {
-			if (mensaje) {
-				mostrarAlertaPersonalizada("Se ha eliminado su suscripcion perfectamente.");
-			}
-		})
-		.catch(function(error) {
+		.catch(error => {
 			console.error("Error en la solicitud:", error);
-			mostrarAlertaPersonalizada("Ocurrió un error inesperado al eliminar la suscripción.");
+			mostrarAlertaPersonalizada("Ocurrió un error inesperado al intentar eliminar la suscripción.");
 		});
 }
 

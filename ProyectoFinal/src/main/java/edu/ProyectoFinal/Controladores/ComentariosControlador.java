@@ -1,13 +1,17 @@
 package edu.ProyectoFinal.Controladores;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.io.IOException;
+import java.util.List;
 
 import edu.ProyectoFinal.Configuraciones.SesionLogger;
+import edu.ProyectoFinal.Dto.ComentariosDTO;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.servicios.ComentariosServicios;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
@@ -15,8 +19,8 @@ import jakarta.servlet.http.HttpSession;
  * 
  * @author jpribio - 30/04/25
  */
-@Controller
-public class ComentariosControlador {
+@WebServlet("/ComentarioPagina")
+public class ComentariosControlador extends HttpServlet {
 
 	private static final SesionLogger logger = new SesionLogger(ComentariosControlador.class);
 
@@ -29,34 +33,41 @@ public class ComentariosControlador {
 	 * @param sesionIniciada
 	 * @return
 	 */
-	@GetMapping("/ComentarioPagina")
-	public ModelAndView vistaPaginaPerfil(HttpSession sesionIniciada, RedirectAttributes redirectAttrs) {
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		HttpSession session = request.getSession(false);
+		UsuarioPerfilDto usuario = session != null ? (UsuarioPerfilDto) session.getAttribute("Usuario") : null;
+
+		if (session == null || usuario == null) {
+			request.setAttribute("error",
+					"No se ha detectado un usuario activo. Por favor, inicie sesión antes de continuar.");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+			return;
+		}
+		if (!usuario.getEsVerificadoEntidad()) {
+			session.setAttribute("infoVerificacion",
+					"No se ha detectado un usuario verificado. Por favor, debe verificarse antes de continuar.");
+			response.sendRedirect(request.getContextPath() + "/LandinPage");
+			return;
+		}
+
+		logger.info("Cargando la vista de comentarios");
 		try {
-			UsuarioPerfilDto usuario = (UsuarioPerfilDto) sesionIniciada.getAttribute("Usuario");
-			if (sesionIniciada == null || usuario == null) {
-				ModelAndView errorVista = new ModelAndView("error");
-				errorVista.addObject("error",
-						"No se ha detectado un usuario activo. Por favor, inicie sesión antes de continuar.");
-				return errorVista;
-			}
-			if (usuario.getEsVerificadoEntidad() == false) {
-				ModelAndView vista = new ModelAndView("redirect:/");
-				redirectAttrs.addFlashAttribute("infoVerificacion",
-						"No se ha detectado un usuario verificado. Por favor, debe de verificarse antes de continuar.");
-				return vista;
+			List<ComentariosDTO> listaComentarios = servicioComentarios.obtenerComentarios();
+
+			request.setAttribute("listadoComentarios", listaComentarios);
+			if (listaComentarios.isEmpty()) {
+				request.setAttribute("mensajeGrupo", "No se encontraron comentarios disponibles.");
 			}
 
-			logger.info("Cargando la vista de comenatarios");
-			ModelAndView vista = new ModelAndView();
-			vista = servicioComentarios.recogidaDeComentarios(sesionIniciada);
-			vista.setViewName("ComentarioPagina");
-			return vista;
+			request.getRequestDispatcher("/ComentarioPagina.jsp").forward(request, response);
+
 		} catch (Exception e) {
-			logger.error("Error al cargar la página de comentarios\n" + e);
-			ModelAndView vista = new ModelAndView("ComentarioPagina");
-			vista.addObject("error", "Error al cargar la comentarios.");
-			vista.setViewName("error");
-			return vista;
+			logger.error("Error al cargar la página de comentarios: " + e.getMessage());
+			request.setAttribute("error", "Error al cargar los comentarios.");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
 	}
 

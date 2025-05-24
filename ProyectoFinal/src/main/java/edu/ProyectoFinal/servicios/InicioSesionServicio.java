@@ -209,35 +209,53 @@ public class InicioSesionServicio {
 	 * @param sesionIniciada
 	 * @return
 	 */
-	public ModelAndView nuevoUsuarioGoogle(String code, HttpSession sesionIniciada) {
-		ModelAndView vista = new ModelAndView("InicioSesion");
-
+	public boolean nuevoUsuarioGoogle(String code, HttpServletRequest request, HttpSession session) {
+		String accessToken;
 		try (Client cliente = ClientBuilder.newClient()) {
-			// Obtener access token de Google
-			String accessToken = obtenerAccessToken(cliente, code);
-			if (accessToken == null) {
-				return manejarError(vista, "Error al obtener token de Google.");
-			}
-
-			// Obtener información del usuario
-			JsonNode userInfo = obtenerUserInfo(cliente, accessToken);
-			if (userInfo == null) {
-				return manejarError(vista, "Error al obtener datos del usuario.");
-			}
-			UsuarioRegistroDto usuarioNuevo = crearUsuarioRegistroDto(userInfo);
-			Response respuestaApi = registrarUsuarioEnApi(cliente, usuarioNuevo);
-			if (respuestaApi.getStatus() != Response.Status.OK.getStatusCode()) {
-				return manejarError(vista, "Error al registrar el usuario en la plataforma.");
-			}
-
-			// Manejar respuesta exitosa
-			manejarRegistroExitoso(respuestaApi, sesionIniciada, vista);
-
+			accessToken = obtenerAccessToken(cliente, code);
 		} catch (Exception e) {
-			return manejarError(vista, "Problema inesperado, inténtelo más tarde.");
+			request.setAttribute("error", "Error al obtener token de Google.");
+			return false;
 		}
+		if (accessToken == null) {
+			request.setAttribute("error", "Error al obtener token de Google.");
+			return false;
+		}
+		JsonNode userInfo;
+		try (Client cliente = ClientBuilder.newClient()) {
+			userInfo = obtenerUserInfo(cliente, accessToken);
+		} catch (Exception e) {
+			request.setAttribute("error", "Error al obtener datos del usuario.");
+			return false;
+		}
+		if (userInfo == null) {
+			request.setAttribute("error", "Error al obtener datos del usuario.");
+			return false;
+		}
+		UsuarioRegistroDto usuarioNuevo = crearUsuarioRegistroDto(userInfo);
+		Client clienteApi = ClientBuilder.newClient();
+		UsuarioPerfilDto perfil;
+		try {
+			Response respuestaApi = registrarUsuarioEnApi(clienteApi, usuarioNuevo);
 
-		return vista;
+			if (respuestaApi.getStatus() != Response.Status.OK.getStatusCode()) {
+				respuestaApi.close();
+				request.setAttribute("error", "Error al registrar el usuario en la plataforma.");
+				return false;
+			}
+			perfil = respuestaApi.readEntity(UsuarioPerfilDto.class);
+			respuestaApi.close();
+		} catch (Exception e) {
+			request.setAttribute("error", "Error al registrar el usuario en la plataforma.");
+			return false;
+		} finally {
+			clienteApi.close();
+		}
+		session.setAttribute("Usuario", perfil);
+		session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+		request.setAttribute("infoVerificacion", "¡¡Bienvenido usuario!!");
+
+		return true;
 	}
 
 	/**
@@ -316,40 +334,6 @@ public class InicioSesionServicio {
 
 		return cliente.target(urlApi).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
-	}
-
-	/**
-	 * Metodo para manejar la informacion si viene de manera exitosa la informacion
-	 * 
-	 * @author jpribio - 26/04/25
-	 * @param respuestaApi
-	 * @param sesion
-	 * @param vista
-	 */
-	private void manejarRegistroExitoso(Response respuestaApi, HttpSession sesion, ModelAndView vista) {
-		sesion.setAttribute("Usuario", respuestaApi.readEntity(UsuarioPerfilDto.class));
-		sesion.setMaxInactiveInterval(60 * 60 * 24 * 7);
-		/*
-		 * ModelAndView gruposVista = servicioGrupos.obtenerLosGruposTops();
-		 * vista.addAllObjects(gruposVista.getModel()); ModelAndView comentariosVista =
-		 * servicioComentarios.recogidaDeComentariosIndex();
-		 * vista.addAllObjects(comentariosVista.getModel());
-		 */
-		vista.setViewName("LandinPage");
-		vista.addObject("infoVerificacion", "¡¡Bienvenido usuario!!");
-	}
-
-	/**
-	 * Metodo para manejar la informacion si viene de erronea exitosa la informacion
-	 * @author jpribio - 26/04/25
-	 * @param vista
-	 * @param mensajeError
-	 * @return
-	 */
-	private ModelAndView manejarError(ModelAndView vista, String mensajeError) {
-		vista.setViewName("error");
-		vista.addObject("error", mensajeError);
-		return vista;
 	}
 
 	/**

@@ -5,12 +5,11 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.web.servlet.ModelAndView;
 
 import edu.ProyectoFinal.Configuraciones.RutasGenericas;
 import edu.ProyectoFinal.Dto.ComentariosDTO;
 import edu.ProyectoFinal.Dto.ComentariosIndexDto;
-import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -86,28 +85,19 @@ public class ComentariosServicios {
 	 * @param sesionInicaida
 	 * @return
 	 */
-	public ModelAndView recogidaDeComentarios(HttpSession sesionInicaida) {
-		ModelAndView vista = new ModelAndView();
-		String url = RutasGenericas.rutaPrincipalApiString + "api/RecogerComentarios";
-
+	public List<ComentariosDTO> obtenerComentarios() throws Exception {
+		String URL_API = RutasGenericas.rutaPrincipalApiString + "api/RecogerComentarios";
+		Client client = ClientBuilder.newClient();
+		Response resp = client.target(URL_API).request(MediaType.APPLICATION_JSON).get();
 		try {
-			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
-
-			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<ComentariosDTO> listadoComentarios = listadoComentarios(respuestaApi);
-				vista.addObject("listadoComentarios", listadoComentarios);
-
-				if (listadoComentarios.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron comentarios disponibles.");
-				}
-			} else {
-				vista.addObject("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
+			if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
+				throw new Exception("API devolvió status " + resp.getStatus());
 			}
-		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			return listadoComentarios(resp);
+		} finally {
+			resp.close();
+			client.close();
 		}
-
-		return vista;
 	}
 
 	/**

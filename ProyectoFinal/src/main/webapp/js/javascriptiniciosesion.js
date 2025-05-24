@@ -69,15 +69,16 @@ function enviarRecuperacion(event) {
 		return;
 	}
 
-	const formData = new FormData();
-	formData.append("correoElectronicoUsu", correo);
+	const params = new URLSearchParams();
+	params.append("correoElectronicoUsu", correo);
 
 	const contextPath = window.location.pathname.split('/')[1];
 	closeRecuperacionModal();
 	mostrarAlertaPersonalizada("Espere un momento a que le llegue el correo para la recuperación de la contraseña.");
 	fetch(`/${contextPath}/RecuperarContrasena`, {
 		method: "POST",
-		body: formData
+		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		body: params.toString()
 	})
 		.then(function(response) {
 			closeRecuperacionModal();
