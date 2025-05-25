@@ -2,6 +2,7 @@ package edu.ProyectoFinal.Controladores;
 
 import java.io.IOException;
 
+import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.servicios.PerfilServicio;
 import jakarta.servlet.ServletException;
@@ -21,6 +22,7 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/ModificarUsuarioComoAdmin")
 @MultipartConfig
 public class ModificarUsuarioComAdminControlador extends HttpServlet {
+	private static final SesionLogger logger = new SesionLogger(ModificarUsuarioComAdminControlador.class);
 	long serialVersionUID = 1L;
 	PerfilServicio servicioPerfil = new PerfilServicio();
 
@@ -36,27 +38,33 @@ public class ModificarUsuarioComAdminControlador extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Validar sesión
-		HttpSession session = request.getSession(false);
-		if (session == null || session.getAttribute("Usuario") == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		}
+		try {
+			logger.info("Inicializacion de la modificacion de un usuario");
+			HttpSession session = request.getSession(false);
+			if (session == null || session.getAttribute("Usuario") == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
 
-		UsuarioPerfilDto dto = new UsuarioPerfilDto();
-		dto.setIdUsu(Long.parseLong(request.getParameter("idUsu")));
-		dto.setNombreCompletoUsu(request.getParameter("nombreCompletoUsu"));
-		dto.setAliasUsu(request.getParameter("aliasUsu"));
-		dto.setCorreoElectronicoUsu(request.getParameter("correoElectronicoUsu"));
-		dto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
-		dto.setEsPremium(Boolean.parseBoolean(request.getParameter("esPremium")));
-		dto.setRolUsu(request.getParameter("rolUsu"));
-		dto.setEsVerificadoEntidad(Boolean.parseBoolean(request.getParameter("esVerificadoEntidad")));
-		String fotoString = request.getParameter("fotoString");
-		if (fotoString != null)
-			dto.setFotoString(fotoString);
-		boolean success = servicioPerfil.enviarUsuarioAModificarComoAdmin(dto, session);
-		response.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
-		response.getWriter().write("");
+			UsuarioPerfilDto dto = new UsuarioPerfilDto();
+			dto.setIdUsu(Long.parseLong(request.getParameter("idUsu")));
+			dto.setNombreCompletoUsu(request.getParameter("nombreCompletoUsu"));
+			dto.setAliasUsu(request.getParameter("aliasUsu"));
+			dto.setCorreoElectronicoUsu(request.getParameter("correoElectronicoUsu"));
+			dto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
+			dto.setEsPremium(Boolean.parseBoolean(request.getParameter("esPremium")));
+			dto.setRolUsu(request.getParameter("rolUsu"));
+			dto.setEsVerificadoEntidad(Boolean.parseBoolean(request.getParameter("esVerificadoEntidad")));
+			String fotoString = request.getParameter("fotoString");
+			if (fotoString != null)
+				dto.setFotoString(fotoString);
+			boolean success = servicioPerfil.enviarUsuarioAModificarComoAdmin(dto, session);
+			response.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("");
+		} catch (Exception e) {
+			logger.error("Error al modificar un usuario" + e);
+			request.setAttribute("error", "Error al modificar un usuario");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}
 	}
 }

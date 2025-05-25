@@ -2,6 +2,7 @@ package edu.ProyectoFinal.Controladores;
 
 import java.io.IOException;
 
+import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.GruposDto;
 import edu.ProyectoFinal.servicios.PerfilServicio;
 import jakarta.servlet.ServletException;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/CrearGrupoComoAdmin")
 @MultipartConfig
 public class CrearGrupoComoAdminControlador extends HttpServlet {
+	private static final SesionLogger logger = new SesionLogger(CrearGrupoComoAdminControlador.class);
 
 	private static final long serialVersionUID = 1L;
 	PerfilServicio servicioPerfil = new PerfilServicio();
@@ -35,21 +37,28 @@ public class CrearGrupoComoAdminControlador extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		if (session == null || session.getAttribute("Usuario") == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		}
-		GruposDto dto = new GruposDto();
-		dto.setNombreGrupo(request.getParameter("nombreGrupo"));
-		dto.setCategoriaNombre(request.getParameter("categoriaNombre"));
-		dto.setSubCategoriaNombre(request.getParameter("subCategoriaNombre"));
-		dto.setAliasCreadorUString(request.getParameter("aliasCreadorUString"));
-		dto.setDescripcionGrupo(request.getParameter("descripcionGrupo"));
-		boolean success = servicioPerfil.crearGrupoComoAdmin(dto);
+		try {
+			logger.info("Inicializacion de la creacion de grupos");
+			HttpSession session = request.getSession(false);
+			if (session == null || session.getAttribute("Usuario") == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+			GruposDto dto = new GruposDto();
+			dto.setNombreGrupo(request.getParameter("nombreGrupo"));
+			dto.setCategoriaNombre(request.getParameter("categoriaNombre"));
+			dto.setSubCategoriaNombre(request.getParameter("subCategoriaNombre"));
+			dto.setAliasCreadorUString(request.getParameter("aliasCreadorUString"));
+			dto.setDescripcionGrupo(request.getParameter("descripcionGrupo"));
+			boolean success = servicioPerfil.crearGrupoComoAdmin(dto);
 
-		response.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
-		response.getWriter().write("");
+			response.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("");
+		} catch (Exception e) {
+			logger.error("Error al crear un grupo" + e);
+			request.setAttribute("error", "Error al crear un grupo");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}
 	}
 
 }

@@ -2,6 +2,7 @@ package edu.ProyectoFinal.Controladores;
 
 import java.io.IOException;
 
+import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.Dto.eliminarElementoPerfilDto;
 import edu.ProyectoFinal.servicios.PerfilServicio;
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpSession;
 public class EliminarElemenetoPerfilControlador extends HttpServlet {
 	long serialVersionUID = 1L;
 	PerfilServicio servicioPerfil = new PerfilServicio();
+	private static final SesionLogger logger = new SesionLogger(EliminarElemenetoPerfilControlador.class);
 
 	/**
 	 * Metodo que recoge al usuario o grupo de la vista y lo manda a la api para que
@@ -37,24 +39,32 @@ public class EliminarElemenetoPerfilControlador extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		UsuarioPerfilDto usuarioSesion = session != null ? (UsuarioPerfilDto) session.getAttribute("Usuario") : null;
+		try {
+			logger.info("Inicializacion al eliminar un objeto/elemeneto");
+			HttpSession session = request.getSession(false);
+			UsuarioPerfilDto usuarioSesion = session != null ? (UsuarioPerfilDto) session.getAttribute("Usuario")
+					: null;
 
-		if (usuarioSesion == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		}
-		eliminarElementoPerfilDto dto = new eliminarElementoPerfilDto();
-		dto.setElementoEliminar(request.getParameter("elementoEliminar"));
-		dto.setIdElementoEliminar(Long.parseLong(request.getParameter("idElementoEliminar")));
-		dto.setEsUsuarioEliminar(Boolean.parseBoolean(request.getParameter("esUsuarioEliminar")));
-		boolean success = servicioPerfil.eliminarElemento(dto);
-		if (success) {
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.getWriter().write("");
-		} else {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().write("");
+			if (usuarioSesion == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+			eliminarElementoPerfilDto dto = new eliminarElementoPerfilDto();
+			dto.setElementoEliminar(request.getParameter("elementoEliminar"));
+			dto.setIdElementoEliminar(Long.parseLong(request.getParameter("idElementoEliminar")));
+			dto.setEsUsuarioEliminar(Boolean.parseBoolean(request.getParameter("esUsuarioEliminar")));
+			boolean success = servicioPerfil.eliminarElemento(dto);
+			if (success) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.getWriter().write("");
+			} else {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().write("");
+			}
+		} catch (Exception e) {
+			logger.error("Error al eliminar un elemento" + e);
+			request.setAttribute("error", "Error al eliminar un elemento");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
 	}
 

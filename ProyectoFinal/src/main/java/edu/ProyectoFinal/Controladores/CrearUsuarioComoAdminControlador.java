@@ -2,6 +2,7 @@ package edu.ProyectoFinal.Controladores;
 
 import java.io.IOException;
 
+import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.servicios.PerfilServicio;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 public class CrearUsuarioComoAdminControlador extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	PerfilServicio servicioPerfil = new PerfilServicio();
+	private static final SesionLogger logger = new SesionLogger(CrearUsuarioComoAdminControlador.class);
 
 	/**
 	 * metodo que coge el usuario de la web y lo manda hacia la api
@@ -34,25 +36,32 @@ public class CrearUsuarioComoAdminControlador extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		if (session == null || session.getAttribute("Usuario") == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
+		try {
+			logger.info("Inicializacion para crear un usuario");
+			HttpSession session = request.getSession(false);
+			if (session == null || session.getAttribute("Usuario") == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+			UsuarioPerfilDto dto = new UsuarioPerfilDto();
+			dto.setNombreCompletoUsu(request.getParameter("nombreCompletoUsu"));
+			dto.setAliasUsu(request.getParameter("aliasUsu"));
+			dto.setCorreoElectronicoUsu(request.getParameter("correoElectronicoUsu"));
+			dto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
+			dto.setEsPremium(Boolean.parseBoolean(request.getParameter("esPremium")));
+			dto.setEsVerificadoEntidad(Boolean.parseBoolean(request.getParameter("esVerificadoEntidad")));
+			dto.setRolUsu(request.getParameter("rolUsu"));
+			String fotoString = request.getParameter("fotoString");
+			if (fotoString != null)
+				dto.setFotoString(fotoString);
+			boolean success = servicioPerfil.crearUsuarioComoAdmin(dto);
+			response.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("");
+		} catch (Exception e) {
+			logger.error("Error al crear un usuario" + e);
+			request.setAttribute("error", "Error al crear un usuario");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
-		UsuarioPerfilDto dto = new UsuarioPerfilDto();
-		dto.setNombreCompletoUsu(request.getParameter("nombreCompletoUsu"));
-		dto.setAliasUsu(request.getParameter("aliasUsu"));
-		dto.setCorreoElectronicoUsu(request.getParameter("correoElectronicoUsu"));
-		dto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
-		dto.setEsPremium(Boolean.parseBoolean(request.getParameter("esPremium")));
-		dto.setEsVerificadoEntidad(Boolean.parseBoolean(request.getParameter("esVerificadoEntidad")));
-		dto.setRolUsu(request.getParameter("rolUsu"));
-		String fotoString = request.getParameter("fotoString");
-		if (fotoString != null)
-			dto.setFotoString(fotoString);
-		boolean success = servicioPerfil.crearUsuarioComoAdmin(dto);
-		response.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
-		response.getWriter().write("");
 	}
 
 }

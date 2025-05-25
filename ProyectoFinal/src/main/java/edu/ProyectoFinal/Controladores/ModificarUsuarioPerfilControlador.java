@@ -2,6 +2,7 @@ package edu.ProyectoFinal.Controladores;
 
 import java.io.IOException;
 
+import edu.ProyectoFinal.Configuraciones.SesionLogger;
 import edu.ProyectoFinal.Dto.UsuarioPerfilDto;
 import edu.ProyectoFinal.servicios.PerfilServicio;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 public class ModificarUsuarioPerfilControlador extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	PerfilServicio servicioPerfil = new PerfilServicio();
+	private static final SesionLogger logger = new SesionLogger(ModificarUsuarioPerfilControlador.class);
 
 	/**
 	 * Metodo que modifica al usuario con los valores incorporados
@@ -34,25 +36,33 @@ public class ModificarUsuarioPerfilControlador extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		UsuarioPerfilDto usuarioSesion = session != null ? (UsuarioPerfilDto) session.getAttribute("Usuario") : null;
-		if (usuarioSesion == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		}
-		UsuarioPerfilDto usuarioDto = new UsuarioPerfilDto();
-		usuarioDto.setAliasUsu(request.getParameter("aliasUsu"));
-		usuarioDto.setNombreCompletoUsu(request.getParameter("nombreCompletoUsu"));
-		usuarioDto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
-		usuarioDto.setFotoString(request.getParameter("fotoString"));
-		UsuarioPerfilDto updated = servicioPerfil.modificarUsuario(usuarioDto, usuarioSesion);
-		if (updated != null) {
-			session.setAttribute("Usuario", updated);
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.getWriter().write("");
-		} else {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().write("");
+		try {
+			logger.info("Inicializacion de la modificacion del perfil");
+			HttpSession session = request.getSession(false);
+			UsuarioPerfilDto usuarioSesion = session != null ? (UsuarioPerfilDto) session.getAttribute("Usuario")
+					: null;
+			if (usuarioSesion == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+			UsuarioPerfilDto usuarioDto = new UsuarioPerfilDto();
+			usuarioDto.setAliasUsu(request.getParameter("aliasUsu"));
+			usuarioDto.setNombreCompletoUsu(request.getParameter("nombreCompletoUsu"));
+			usuarioDto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
+			usuarioDto.setFotoString(request.getParameter("fotoString"));
+			UsuarioPerfilDto updated = servicioPerfil.modificarUsuario(usuarioDto, usuarioSesion);
+			if (updated != null) {
+				session.setAttribute("Usuario", updated);
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.getWriter().write("");
+			} else {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().write("");
+			}
+		} catch (Exception e) {
+			logger.error("Error al modificar el perfil" + e);
+			request.setAttribute("error", "Error al modificar el perfil");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
 	}
 }
