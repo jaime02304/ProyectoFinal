@@ -346,6 +346,8 @@ function actualizarSubcategoriasGM() {
 			{ value: "shooters", text: "Shooters - Disparos en primera o tercera persona" },
 			{ value: "aventuras", text: "Aventuras - Exploración y narrativas" },
 			{ value: "deportes", text: "Deportes - Juegos deportivos" }
+		], auxiliar: [
+			{ value: 'auxiliar', text: 'Auxiliar - Grupos auxiliares' }
 		]
 	};
 

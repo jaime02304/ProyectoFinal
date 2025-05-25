@@ -455,10 +455,10 @@
 								<a href="<%=request.getContextPath()%>/CerrarSesion"><button
 										class="hacersePremiumBoton2 botonNavegador">Cerrar</button></a>
 							</div>
-							<div class="divBoton">
-								<!--  <button class="hacersePremiumBoton2 botonNavegador"
-									onclick="alertaDelPremium()">Premium</button>-->
-							</div>
+							<!--<div class="divBoton">
+								  <button class="hacersePremiumBoton2 botonNavegador"
+									onclick="alertaDelPremium()">Premium</button>
+							</div>-->
 						</div>
 					</div>
 				</div>
@@ -1013,6 +1013,7 @@
 							onchange="actualizarSubcategoriasGM()">
 							<option value="anime">Anime</option>
 							<option value="videojuegos">Videojuegos</option>
+							<option value="auxiliar">Auxiliar</option>
 						</select>
 					</div>
 

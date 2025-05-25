@@ -11,9 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.ProyectoFinal.Configuraciones.RutasGenericas;
@@ -40,44 +38,6 @@ import jakarta.ws.rs.core.Response;
 public class PerfilServicio {
 
 	Util utilidades = new Util();
-
-	/**
-	 * Metodo que coge el comentario por defecto del usuario
-	 * 
-	 * @author jpribio - 04/02/25
-	 * @param usuarioParaBuscar
-	 * @return
-	 */
-	public ModelAndView busquedaDelComentarioDelUsuario(UsuarioPerfilDto usuarioParaBuscar) {
-		ModelAndView vista = new ModelAndView();
-		String url = RutasGenericas.rutaPrincipalApiString + "api/perfil/comentario";
-
-		try (Client cliente = ClientBuilder.newClient()) {
-			String usuarioJson = new ObjectMapper().writeValueAsString(usuarioParaBuscar);
-			Response respuestaApi = cliente.target(url).request(MediaType.APPLICATION_JSON)
-					.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
-
-			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				String jsonString = respuestaApi.readEntity(String.class);
-				JSONObject jsonResponse = new JSONObject(jsonString);
-				ComentariosPerfilDto comentario = obtenerComentario(jsonResponse);
-
-				if (comentario != null) {
-					vista.addObject("comentario", comentario);
-				} else {
-					vista.addObject("mensajePerfil", "No se encontraron comentarios para el usuario.");
-				}
-			} else {
-				vista.addObject("error", "No se ha encontrado ningún comentario debido a un error en la API.");
-				vista.setViewName("error");
-			}
-		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
-			vista.setViewName("error");
-		}
-
-		return vista;
-	}
 
 	/**
 	 * Metodo privado que pasa de json a a comentario del perfil (DTO)
@@ -112,30 +72,30 @@ public class PerfilServicio {
 	 * @param ususarioParaFiltrar
 	 * @return vista
 	 */
-	public ModelAndView obtenerGruposDelUsuario(UsuarioPerfilDto ususarioParaFiltrar) {
-		ModelAndView vista = new ModelAndView();
+	private Map<String, Object> obtenerGruposDelUsuario(UsuarioPerfilDto usuarioParaFiltrar) {
+		Map<String, Object> datos = new HashMap<>();
 		String url = RutasGenericas.rutaPrincipalApiString + "api/perfil/grupos";
 
 		try {
-			String usuarioJson = new ObjectMapper().writeValueAsString(ususarioParaFiltrar);
+			String usuarioJson = new ObjectMapper().writeValueAsString(usuarioParaFiltrar);
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON)
 					.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
 
 			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<GruposListadoDto> listadoGruposUsuario = listadoGrupos(respuestaApi);
-				vista.addObject("listadoGruposUsuario", listadoGruposUsuario);
+				List<GruposListadoDto> listado = listadoGrupos(respuestaApi);
+				datos.put("listadoGruposUsuario", listado);
 
-				if (listadoGruposUsuario.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron grupos disponibles.");
+				if (listado.isEmpty()) {
+					datos.put("mensajeGrupo", "No se encontraron grupos disponibles.");
 				}
 			} else {
-				vista.addObject("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
+				datos.put("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			datos.put("error", "Error al conectar con la API: " + e.getMessage());
 		}
 
-		return vista;
+		return datos;
 	}
 
 	/**
@@ -145,28 +105,28 @@ public class PerfilServicio {
 	 * @author jpribio - 06/02/25
 	 * @return vista
 	 */
-	public ModelAndView obtenerGruposParaAdmin() {
-		ModelAndView vista = new ModelAndView();
+	private Map<String, Object> obtenerGruposParaAdmin() {
+		Map<String, Object> datos = new HashMap<>();
 		String url = RutasGenericas.rutaPrincipalApiString + "api/grupos";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
 
 			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<GruposListadoDto> listadoGruposAdmin = listadoGrupos(respuestaApi);
-				vista.addObject("listadoGruposAdmin", listadoGruposAdmin);
+				List<GruposListadoDto> listado = listadoGrupos(respuestaApi);
+				datos.put("listadoGruposAdmin", listado);
 
-				if (listadoGruposAdmin.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron grupos disponibles.");
+				if (listado.isEmpty()) {
+					datos.put("mensajeGrupo", "No se encontraron grupos disponibles.");
 				}
 			} else {
-				vista.addObject("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
+				datos.put("error", "Error al obtener los grupos: " + respuestaApi.getStatusInfo().toString());
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			datos.put("error", "Error al conectar con la API: " + e.getMessage());
 		}
 
-		return vista;
+		return datos;
 	}
 
 	/**
@@ -176,28 +136,28 @@ public class PerfilServicio {
 	 * @author jpribio - 06/02/25
 	 * @return
 	 */
-	public ModelAndView obtenerUsuariosRolUser() {
-		ModelAndView vista = new ModelAndView();
+	private Map<String, Object> obtenerUsuariosRolUser() {
+		Map<String, Object> datos = new HashMap<>();
 		String url = RutasGenericas.rutaPrincipalApiString + "api/usuariosPerfil";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
 
 			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<UsuarioPerfilDto> listadoUsuario = listadoUsuarios(respuestaApi);
-				vista.addObject("listadoUsuariosAdmin", listadoUsuario);
+				List<UsuarioPerfilDto> listado = listadoUsuarios(respuestaApi);
+				datos.put("listadoUsuariosAdmin", listado);
 
-				if (listadoUsuario.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron usuarios disponibles.");
+				if (listado.isEmpty()) {
+					datos.put("mensajeGrupo", "No se encontraron usuarios disponibles.");
 				}
 			} else {
-				vista.addObject("error", "Error al obtener los usuarios: " + respuestaApi.getStatusInfo().toString());
+				datos.put("error", "Error al obtener los usuarios: " + respuestaApi.getStatusInfo().toString());
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			datos.put("error", "Error al conectar con la API: " + e.getMessage());
 		}
 
-		return vista;
+		return datos;
 	}
 
 	/**
@@ -206,28 +166,28 @@ public class PerfilServicio {
 	 * @author jpribio - 06/02/25
 	 * @return
 	 */
-	public ModelAndView obtenerUsuariosParaSAdmin() {
-		ModelAndView vista = new ModelAndView();
+	private Map<String, Object> obtenerUsuariosParaSAdmin() {
+		Map<String, Object> datos = new HashMap<>();
 		String url = RutasGenericas.rutaPrincipalApiString + "api/usuarioSAdminPerfil";
 
 		try {
 			Response respuestaApi = ClientBuilder.newClient().target(url).request(MediaType.APPLICATION_JSON).get();
 
 			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-				List<UsuarioPerfilDto> listadoUsuario = listadoUsuarios(respuestaApi);
-				vista.addObject("listadoUsuariosSAdmin", listadoUsuario);
+				List<UsuarioPerfilDto> listado = listadoUsuarios(respuestaApi);
+				datos.put("listadoUsuariosSAdmin", listado);
 
-				if (listadoUsuario.isEmpty()) {
-					vista.addObject("mensajeGrupo", "No se encontraron usuarios disponibles.");
+				if (listado.isEmpty()) {
+					datos.put("mensajeGrupo", "No se encontraron usuarios disponibles.");
 				}
 			} else {
-				vista.addObject("error", "Error al obtener los usuarios: " + respuestaApi.getStatusInfo().toString());
+				datos.put("error", "Error al obtener los usuarios: " + respuestaApi.getStatusInfo().toString());
 			}
 		} catch (Exception e) {
-			vista.addObject("error", "Error al conectar con la API: " + e.getMessage());
+			datos.put("error", "Error al conectar con la API: " + e.getMessage());
 		}
 
-		return vista;
+		return datos;
 	}
 
 	/**
@@ -322,37 +282,24 @@ public class PerfilServicio {
 	 * @param usuarioPaFiltrar
 	 * @return
 	 */
-	public ResponseEntity<?> modificarUsuario(UsuarioPerfilDto usuarioAModificar, HttpSession sesion) {
-		String url = RutasGenericas.rutaPrincipalApiString + "api/ModificarUsuario";
-
+	public UsuarioPerfilDto modificarUsuario(UsuarioPerfilDto dtoModificado, UsuarioPerfilDto usuarioSesion) {
+		String URL_API = RutasGenericas.rutaPrincipalApiString + "api/ModificarUsuario";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			// Obtener el usuario actual de la sesión y combinarlo con los datos a modificar
-			UsuarioPerfilDto usuarioPaFiltrar = (UsuarioPerfilDto) sesion.getAttribute("Usuario");
-			usuarioAModificar = combinarUsuario(usuarioAModificar, usuarioPaFiltrar);
-
-			// Convertir el objeto a JSON para enviarlo a la API
-			String usuarioJson = new ObjectMapper().writeValueAsString(usuarioAModificar);
-
-			// Usamos try-with-resources para asegurar el cierre del cliente
+			UsuarioPerfilDto combinado = combinarUsuario(dtoModificado, usuarioSesion);
+			String json = objectMapper.writeValueAsString(combinado);
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
-						.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
-
-				// Leer la respuesta como un objeto UsuarioPerfilDto
-				UsuarioPerfilDto usuarioPerfil = respuestaApi.readEntity(UsuarioPerfilDto.class);
-
-				if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode() && usuarioPerfil != null) {
-					// Actualizar la sesión con el usuario modificado
-					sesion.setAttribute("Usuario", usuarioPerfil);
-					return ResponseEntity.ok("Se ha modificado el usuario exitosamente");
-				} else {
-					String errorMsg = "Error al modificar el usuario: " + respuestaApi.getStatusInfo();
-					return ResponseEntity.status(respuestaApi.getStatus()).body(errorMsg);
+				Response apiResponse = client.target(URL_API).request(MediaType.APPLICATION_JSON)
+						.post(Entity.entity(json, MediaType.APPLICATION_JSON));
+				if (apiResponse.getStatus() == Response.Status.OK.getStatusCode() && apiResponse.hasEntity()) {
+					UsuarioPerfilDto updated = apiResponse.readEntity(UsuarioPerfilDto.class);
+					return updated;
 				}
+				return null;
 			}
 		} catch (Exception e) {
-			String errorMsg = "Error al conectar con la API: " + e.getMessage();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -365,36 +312,19 @@ public class PerfilServicio {
 	 * @param sesion
 	 * @return
 	 */
-	public ResponseEntity<?> enviarElementoParaBorrar(eliminarElementoPerfilDto eliminarElemento, HttpSession sesion) {
-		String url = RutasGenericas.rutaPrincipalApiString + "api/EliminarElemento";
-
+	public boolean eliminarElemento(eliminarElementoPerfilDto eliminarElemento) {
+		String URL_ELIMINAR = RutasGenericas.rutaPrincipalApiString + "api/EliminarElemento";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			// Convertir el objeto a JSON para enviarlo a la API
-			String elementoJson = new ObjectMapper().writeValueAsString(eliminarElemento);
-
-			// Usar try-with-resources para gestionar el cierre del cliente automáticamente
+			String json = objectMapper.writeValueAsString(eliminarElemento);
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
-						.post(Entity.entity(elementoJson, MediaType.APPLICATION_JSON));
-
-				// Convertir la respuesta en un Map
-				Map<String, String> respuestaMap = respuestaApi.readEntity(new GenericType<Map<String, String>>() {
-				});
-
-				if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()
-						&& respuestaMap.containsKey("message")) {
-					// Actualizar la sesión si es necesario
-					UsuarioPerfilDto usuarioPerfil = (UsuarioPerfilDto) sesion.getAttribute("Usuario");
-					sesion.setAttribute("Usuario", usuarioPerfil);
-					return ResponseEntity.ok(respuestaMap); // Devuelve el mismo Map con el mensaje de éxito
-				} else {
-					String errorMsg = respuestaMap.getOrDefault("error", "Error desconocido al eliminar el elemento.");
-					return ResponseEntity.status(respuestaApi.getStatus()).body(Map.of("error", errorMsg));
-				}
+				Response apiResponse = client.target(URL_ELIMINAR).request(MediaType.APPLICATION_JSON)
+						.post(Entity.entity(json, MediaType.APPLICATION_JSON));
+				return apiResponse.getStatus() == Response.Status.OK.getStatusCode();
 			}
 		} catch (Exception e) {
-			String errorMsg = "Error al conectar con la API: " + e.getMessage();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", errorMsg));
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -406,35 +336,21 @@ public class PerfilServicio {
 	 * @param sesion
 	 * @return
 	 */
-	public ResponseEntity<Map<String, Object>> enviarUsuarioAModificarComoAdmin(UsuarioPerfilDto usuarioAModificar,
-			HttpSession sesion) {
-		String url = RutasGenericas.rutaPrincipalApiString + "api/ModificarUsuarioComoAdmin";
-		Map<String, Object> responseMap = new HashMap<>();
-
+	public boolean enviarUsuarioAModificarComoAdmin(UsuarioPerfilDto usuarioAModificar, HttpSession sesion) {
+		String URL_MODIFICAR_ADMIN = RutasGenericas.rutaPrincipalApiString + "api/ModificarUsuarioComoAdmin";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			usuarioAModificar
-					.setFotoUsu(obtenerFotoUsuario(usuarioAModificar.getFotoString(), usuarioAModificar.getFotoUsu()));
-			String usuarioJson = new ObjectMapper().writeValueAsString(usuarioAModificar);
+			byte[] fotoBytes = obtenerFotoUsuario(usuarioAModificar.getFotoString(), usuarioAModificar.getFotoUsu());
+			usuarioAModificar.setFotoUsu(fotoBytes);
+			String usuarioJson = objectMapper.writeValueAsString(usuarioAModificar);
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
+				Response respuestaApi = client.target(URL_MODIFICAR_ADMIN).request(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
-				// Convertir la respuesta de la API (en JSON) a un Map
-				String jsonResponse = respuestaApi.readEntity(String.class);
-				responseMap = new ObjectMapper().readValue(jsonResponse, new TypeReference<Map<String, Object>>() {
-				});
-			}
-			if (responseMap.containsKey("message")
-					&& "Usuario modificado correctamente.".equals(responseMap.get("message"))) {
-				// Actualizar datos del usuario en la sesión si la modificación fue exitosa
-				UsuarioPerfilDto usuarioPerfil = (UsuarioPerfilDto) sesion.getAttribute("Usuario");
-				sesion.setAttribute("Usuario", usuarioPerfil);
-				return ResponseEntity.ok(responseMap);
-			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMap);
+				return respuestaApi.getStatus() == Response.Status.OK.getStatusCode();
 			}
 		} catch (Exception e) {
-			responseMap.put("error", "Error al conectar con la API: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -447,32 +363,19 @@ public class PerfilServicio {
 	 * @param sesion
 	 * @return
 	 */
-	public ResponseEntity<Map<String, Object>> enviarGrupoAModificarComoAdmin(GruposListadoDto grupoAModificar,
-			HttpSession sesion) {
-		String url = RutasGenericas.rutaPrincipalApiString + "api/ModificarGrupoComoAdmin";
-		Map<String, Object> responseMap = new HashMap<>();
-
+	public boolean enviarGrupoAModificarComoAdmin(GruposListadoDto grupoAModificar) {
+		String URL_MODIFICAR_GRUPO_ADMIN = RutasGenericas.rutaPrincipalApiString + "api/ModificarGrupoComoAdmin";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			String grupoJson = new ObjectMapper().writeValueAsString(grupoAModificar);
-
+			String grupoJson = objectMapper.writeValueAsString(grupoAModificar);
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
+				Response respuestaApi = client.target(URL_MODIFICAR_GRUPO_ADMIN).request(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(grupoJson, MediaType.APPLICATION_JSON));
-
-				// Convertir la respuesta de la API (en JSON) a un Map
-				String jsonResponse = respuestaApi.readEntity(String.class);
-				responseMap = new ObjectMapper().readValue(jsonResponse, new TypeReference<Map<String, Object>>() {
-				});
-			}
-			if (responseMap.containsKey("message")
-					&& "Grupo modificado correctamente.".equals(responseMap.get("message"))) {
-				return ResponseEntity.ok(responseMap);
-			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMap);
+				return respuestaApi.getStatus() == Response.Status.OK.getStatusCode();
 			}
 		} catch (Exception e) {
-			responseMap.put("error", "Error al conectar con la API: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -484,42 +387,26 @@ public class PerfilServicio {
 	 * @param sesion
 	 * @return
 	 */
-	public ResponseEntity<Map<String, Object>> crearUsuarioComoAdmin(UsuarioPerfilDto usuarioCreado,
-			HttpSession sesion) {
-		Map<String, Object> responseMap = new HashMap<>();
-		String url = RutasGenericas.rutaPrincipalApiString + "api/CrearUsuarioComoAdmin";
-
+	public boolean crearUsuarioComoAdmin(UsuarioPerfilDto usuarioCreado) {
+		String URL_CREAR_ADMIN = RutasGenericas.rutaPrincipalApiString + "api/CrearUsuarioComoAdmin";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			// Convertir el objeto a JSON para enviarlo a la API
-			usuarioCreado.setContraseniaUsu(utilidades.encriptarASHA256(usuarioCreado.getContraseniaUsu()));
-			usuarioCreado.setFotoUsu(obtenerFotoUsuario(usuarioCreado.getFotoString(), usuarioCreado.getFotoUsu()));
-			String usuarioJson = new ObjectMapper().writeValueAsString(usuarioCreado);
+			// Encryptar contraseña y convertir fotoString a bytes si aplica
+			if (usuarioCreado.getContraseniaUsu() != null) {
+				usuarioCreado.setContraseniaUsu(utilidades.encriptarASHA256(usuarioCreado.getContraseniaUsu()));
+			}
+			byte[] fotoBytes = obtenerFotoUsuario(usuarioCreado.getFotoString(), usuarioCreado.getFotoUsu());
+			usuarioCreado.setFotoUsu(fotoBytes);
 
-			// Usar try-with-resources para gestionar el cierre del cliente automáticamente
+			String usuarioJson = objectMapper.writeValueAsString(usuarioCreado);
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
+				Response respuestaApi = client.target(URL_CREAR_ADMIN).request(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
-
-				// Leer la respuesta de la API como un Map
-				String jsonResponse = respuestaApi.readEntity(String.class);
-				responseMap = new ObjectMapper().readValue(jsonResponse, new TypeReference<Map<String, Object>>() {
-				});
-
-				// Validar la respuesta y actuar en consecuencia
-				if (responseMap.containsKey("message")
-						&& "Usuario creado correctamente.".equals(responseMap.get("message"))) {
-					UsuarioPerfilDto usuarioPerfil = (UsuarioPerfilDto) sesion.getAttribute("Usuario");
-					usuarioPerfil.setFotoUsu(Base64.getDecoder().decode(usuarioPerfil.getFotoString()));
-					sesion.setAttribute("Usuario", usuarioPerfil);
-					return ResponseEntity.ok(responseMap);
-				} else {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMap);
-				}
+				return respuestaApi.getStatus() == Response.Status.OK.getStatusCode();
 			}
 		} catch (Exception e) {
-			String errorMsg = "Error al conectar con la API: " + e.getMessage();
-			responseMap.put("message", errorMsg); // Mensaje de error
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -531,42 +418,24 @@ public class PerfilServicio {
 	 * @param sesion
 	 * @return
 	 */
-	public ResponseEntity<?> crearGrupoComoAdmin(GruposDto grupoCreado, HttpSession sesion) {
-		String url = RutasGenericas.rutaPrincipalApiString + "api/CrearGrupoComoAdmin";
-
+	public boolean crearGrupoComoAdmin(GruposDto grupoCreado) {
+		String URL_CREAR_GRUPO_ADMIN = RutasGenericas.rutaPrincipalApiString + "api/CrearGrupoComoAdmin";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			// Convertir el objeto a JSON para enviarlo a la API
-			String grupoJson = new ObjectMapper().writeValueAsString(grupoCreado);
+			String grupoJson = objectMapper.writeValueAsString(grupoCreado);
 
-			// Usamos try-with-resources para asegurar el cierre del cliente
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
+				Response respuestaApi = client.target(URL_CREAR_GRUPO_ADMIN).request(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(grupoJson, MediaType.APPLICATION_JSON));
 
-				// Convertir la respuesta a un Map para analizar los datos recibidos
-				Map<String, Object> respuestaMap = respuestaApi.readEntity(new GenericType<Map<String, Object>>() {
-				});
-
-				if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()
-						&& respuestaMap.containsKey("grupo")) {
-
-					Object grupo = respuestaMap.get("grupo");
-
-					// Validar si el grupo está vacío o es un string vacío
-					if (grupo == null || grupo.toString().trim().isEmpty()) {
-						String errorMsg = "El grupo ya existe.";
-						return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMsg);
-					} else {
-						return ResponseEntity.ok("Se ha creado el grupo exitosamente");
-					}
-				} else {
-					String errorMsg = "Error al crear el grupo: " + respuestaApi.getStatusInfo();
-					return ResponseEntity.status(respuestaApi.getStatus()).body(errorMsg);
+				if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
+					return true;
 				}
+				return false;
 			}
 		} catch (Exception e) {
-			String errorMsg = "Error al conectar con la API: " + e.getMessage();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -578,37 +447,21 @@ public class PerfilServicio {
 	 * @param sesion
 	 * @return
 	 */
-	public ResponseEntity<?> crearComentarioPerfil(ComentariosPerfilDto nuevoComentarios, HttpSession sesion) {
-		String url = RutasGenericas.rutaPrincipalApiString + "api/CrearComentarioPerfil";
+	public boolean crearComentarioComoAdmin(ComentariosPerfilDto nuevoComentario) {
+		String URL_CREAR_COMENTARIO = RutasGenericas.rutaPrincipalApiString + "api/CrearComentarioPerfil";
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			String comentarioJson = new ObjectMapper().writeValueAsString(nuevoComentarios);
+			String comentarioJson = objectMapper.writeValueAsString(nuevoComentario);
 
 			try (Client client = ClientBuilder.newClient()) {
-				Response respuestaApi = client.target(url).request(MediaType.APPLICATION_JSON)
+				Response respuestaApi = client.target(URL_CREAR_COMENTARIO).request(MediaType.APPLICATION_JSON)
 						.post(Entity.entity(comentarioJson, MediaType.APPLICATION_JSON));
-				Map<String, Object> respuestaMap = respuestaApi.readEntity(new GenericType<Map<String, Object>>() {
-				});
-				if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
-					if (respuestaMap.containsKey("comentario")) {
-						Object comentario = respuestaMap.get("comentario");
-						if (comentario == null || comentario.toString().trim().isEmpty()) {
-							String errorMsg = "No se pudo crear el comentario.";
-							return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMsg);
-						} else {
-							return ResponseEntity.ok("Se ha creado el comentario exitosamente.");
-						}
-					} else {
-						String errorMsg = "Error al crear el comentario: No se recibió información válida.";
-						return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
-					}
-				} else {
-					String errorMsg = "Error al crear el comentario: " + respuestaApi.getStatusInfo();
-					return ResponseEntity.status(respuestaApi.getStatus()).body(errorMsg);
-				}
+
+				return respuestaApi.getStatus() == Response.Status.OK.getStatusCode();
 			}
 		} catch (Exception e) {
-			String errorMsg = "Error al conectar con la API: " + e.getMessage();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -621,30 +474,69 @@ public class PerfilServicio {
 	 * @param vista
 	 * @return
 	 */
-	public ModelAndView condicionYCasosPerfil(UsuarioPerfilDto usuarioABuscar, ModelAndView vista) {
-		if (usuarioABuscar != null) {
-			switch (usuarioABuscar.getRolUsu()) {
+	public Map<String, Object> obtenerDatosPerfil(UsuarioPerfilDto usuario) {
+		Map<String, Object> modelo = new HashMap<>();
+
+		if (usuario != null) {
+			switch (usuario.getRolUsu()) {
 			case "user":
-				vista = obtenerGruposDelUsuario(usuarioABuscar);
-				busquedaDelComentarioDelUsuario(usuarioABuscar).getModel().forEach(vista::addObject);
+				modelo.putAll(obtenerGruposDelUsuario(usuario));
+				modelo.putAll(busquedaDelComentarioDelUsuario(usuario));
 				break;
 
 			case "admin":
-				vista = obtenerGruposParaAdmin();
-				obtenerUsuariosRolUser().getModel().forEach(vista::addObject);
+				modelo.putAll(obtenerGruposParaAdmin());
+				modelo.putAll(obtenerUsuariosRolUser());
 				break;
 
-			default: // Super Admin u otros roles
-				vista = obtenerGruposParaAdmin();
-				obtenerUsuariosParaSAdmin().getModel().forEach(vista::addObject);
+			default: // Super admin u otros
+				modelo.putAll(obtenerGruposParaAdmin());
+				modelo.putAll(obtenerUsuariosParaSAdmin());
 				break;
 			}
-			vista.setViewName("perfilUsuario");
+			modelo.put("vista", "perfilUsuario");
 		} else {
-			vista.setViewName("error");
-			vista.addObject("error", "Usuario no encontrado en la sesión.");
+			modelo.put("vista", "error");
+			modelo.put("error", "Usuario no encontrado en la sesión.");
 		}
-		return vista;
+
+		return modelo;
+	}
+
+	/**
+	 * Metodo que coge el comentario por defecto del usuario
+	 * 
+	 * @author jpribio - 04/02/25
+	 * @param usuarioParaBuscar
+	 * @return
+	 */
+	private Map<String, Object> busquedaDelComentarioDelUsuario(UsuarioPerfilDto usuario) {
+		Map<String, Object> datos = new HashMap<>();
+		String url = RutasGenericas.rutaPrincipalApiString + "api/perfil/comentario";
+
+		try (Client cliente = ClientBuilder.newClient()) {
+			String usuarioJson = new ObjectMapper().writeValueAsString(usuario);
+			Response respuestaApi = cliente.target(url).request(MediaType.APPLICATION_JSON)
+					.post(Entity.entity(usuarioJson, MediaType.APPLICATION_JSON));
+
+			if (respuestaApi.getStatus() == Response.Status.OK.getStatusCode()) {
+				String jsonString = respuestaApi.readEntity(String.class);
+				JSONObject jsonResponse = new JSONObject(jsonString);
+				ComentariosPerfilDto comentario = obtenerComentario(jsonResponse);
+
+				if (comentario != null) {
+					datos.put("comentario", comentario);
+				} else {
+					datos.put("mensajePerfil", "No se encontraron comentarios para el usuario.");
+				}
+			} else {
+				datos.put("error", "Error al obtener comentario: " + respuestaApi.getStatusInfo().toString());
+			}
+		} catch (Exception e) {
+			datos.put("error", "Error al conectar con la API: " + e.getMessage());
+		}
+
+		return datos;
 	}
 
 	/**
