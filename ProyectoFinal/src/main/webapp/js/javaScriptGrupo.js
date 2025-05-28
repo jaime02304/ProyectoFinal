@@ -125,8 +125,7 @@ function enviarCreacionGrupo(event) {
 	formData.append('subCategoriaNombre', subcategoria);
 	formData.append('aliasCreadorUString', AliasCreador);
 
-	const contextPath = window.location.pathname.split('/')[1];
-	fetch(`/${contextPath}/CrearGrupoComoAdmin`, {
+	fetch(`/CrearGrupoComoAdmin`, {
 		method: 'POST',
 		body: formData
 	})
@@ -408,8 +407,7 @@ function enviarSolicitudUnirse() {
 	const params = new URLSearchParams();
 	params.append("nombreGrupo", nombreGrupo);
 
-	const contextPath = window.location.pathname.split('/')[1];
-	const url = `/${contextPath}/UnirseAlGrupo`;
+	const url = `/UnirseAlGrupo`;
 
 	fetch(url, {
 		method: "POST",
@@ -448,9 +446,7 @@ function enviarSolicitudEliminar() {
 	const params = new URLSearchParams();
 	params.append("nombreGrupo", nombreGrupo);
 
-	var contextPath = window.location.pathname.split('/')[1];
-
-	fetch("/" + contextPath + "/EliminarDelGrupo", {
+	fetch("/EliminarDelGrupo", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded"

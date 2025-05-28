@@ -766,7 +766,7 @@
 					<div
 						style="display: flex; justify-content: center; align-items: center;">
 						<div
-							style="display: flex; justify-content: center; align-items: center; margin: 10px; flex-direction: column;">
+							style="display: none; justify-content: center; align-items: center; margin: 10px; flex-direction: column;">
 							<label for="esPremiumNuevo">Cuenta Premium</label> <input
 								type="checkbox" id="esPremiumNuevo" name="esPremiumNuevo" />
 						</div>
@@ -818,6 +818,7 @@
 							onchange="actualizarSubcategoriasCreacionG()">
 							<option value="anime">Anime</option>
 							<option value="videojuegos">Videojuegos</option>
+							<option value="auxiliar">Auxiliar</option>
 						</select>
 					</div>
 
@@ -963,7 +964,7 @@
 					<div
 						style="display: flex; justify-content: center; align-items: center;">
 						<div
-							style="display: flex; justify-content: center; align-items: center; margin: 10px; flex-direction: column;">
+							style="display: none; justify-content: center; align-items: center; margin: 10px; flex-direction: column;">
 							<label for="esPremium">Cuenta Premium</label> <input
 								type="checkbox" id="esPremium" name="esPremium" />
 						</div>

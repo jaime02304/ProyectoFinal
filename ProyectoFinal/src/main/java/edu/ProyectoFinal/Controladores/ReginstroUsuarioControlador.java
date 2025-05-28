@@ -58,7 +58,7 @@ public class ReginstroUsuarioControlador extends HttpServlet {
 				request.setAttribute("listaGrupos", listaGrupos);
 				request.setAttribute("listaComentariosIndex", listaComentarios);
 				request.setAttribute("infoVerificacion",
-						"Registro completado con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.");
+						"Registro completado con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta. Tras hacerlo cierre sesion en la página de perfil y vuelva a iniciar de nuevo para desbloquear toda la página web.");
 				request.getRequestDispatcher("/LandinPage.jsp").forward(request, response);
 
 			} else {

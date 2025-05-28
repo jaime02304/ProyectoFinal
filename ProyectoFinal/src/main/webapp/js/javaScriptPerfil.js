@@ -77,9 +77,8 @@ function enviarFormulario(event) {
 }
 
 function enviarDatosAlServidor(formData) {
-	var contextPath = window.location.pathname.split('/')[1];
 
-	fetch("/" + contextPath + "/ModificarUsuario", {
+	fetch("/ModificarUsuario", {
 		method: "POST",
 		body: formData
 	})
@@ -167,11 +166,8 @@ function enviarEliminacion(event) {
 	formData.append("idElementoEliminar", id);
 	formData.append("esUsuarioEliminar", esUsuario)
 
-	// Obtenemos el contexto de la aplicación (asumiendo que está en la URL)
-	const contextPath = window.location.pathname.split('/')[1];
-
 	// Realizamos la solicitud POST usando fetch con promesas
-	fetch(`/${contextPath}/EliminarElementosComoAdmin`, {
+	fetch(`/EliminarElementosComoAdmin`, {
 		method: "POST",
 		body: formData
 	})
@@ -250,7 +246,7 @@ function enviarModificacion(event) {
 	formData.append("aliasUsu", alias);
 	formData.append("correoElectronicoUsu", correo);
 	formData.append("movilUsu", movil);
-	formData.append("esPremium", esPremium);
+	//formData.append("esPremium", esPremium);
 	formData.append("rolUsu", rol);
 	formData.append("esVerificadoEntidad", esVerificadoEntidad);
 	// Si se seleccionó una nueva foto
@@ -277,10 +273,8 @@ function enviarModificacion(event) {
 
 // Función para enviar los datos al servidor
 function enviarDatosAlServidorM(formData) {
-	const contextPath = window.location.pathname.split('/')[1];
-
 	// Realizamos la solicitud POST usando fetch
-	fetch(`/${contextPath}/ModificarUsuarioComoAdmin`, {
+	fetch(`/ModificarUsuarioComoAdmin`, {
 		method: "POST",
 		body: formData
 	})
@@ -384,11 +378,8 @@ function enviarModificacionGrupo(event) {
 	formData.append("subCategoriaNombre", subCategoriaGrupo);
 	formData.append("descripcionGrupo", descripcionGrupo)
 
-	// Obtener el contexto de la aplicación
-	const contextPath = window.location.pathname.split('/')[1];
-
 	// Realizar la solicitud POST usando fetch
-	fetch(`/${contextPath}/ModificarGrupoComoAdmin`, {
+	fetch(`/ModificarGrupoComoAdmin`, {
 		method: "POST",
 		body: formData
 	})
@@ -450,7 +441,7 @@ function enviarCreacionUsuario(event) {
 	formData.append("aliasUsu", alias);
 	formData.append("correoElectronicoUsu", correo);
 	formData.append("movilUsu", movil);
-	formData.append("esPremium", esPremium);
+	//formData.append("esPremium", esPremium);
 	formData.append("esVerificadoEntidad", esVerificado);
 	formData.append("rolUsu", rol);
 
@@ -469,10 +460,8 @@ function enviarCreacionUsuario(event) {
 }
 
 function enviarDatosAlServidorC(formData) {
-	const contextPath = window.location.pathname.split('/')[1];
-
 	// Realizamos la solicitud POST usando fetch
-	fetch(`/${contextPath}/CrearUsuarioComoAdmin`, {
+	fetch(`/CrearUsuarioComoAdmin`, {
 		method: "POST",
 		body: formData
 	})
@@ -528,6 +517,8 @@ function actualizarSubcategoriasCreacionG() {
 			{ value: "shooters", text: "Shooters - Disparos en primera o tercera persona" },
 			{ value: "aventuras", text: "Aventuras - Exploración y narrativas" },
 			{ value: "deportes", text: "Deportes - Juegos deportivos" }
+		], auxiliar: [
+			{ value: 'auxiliar', text: 'Auxiliar - Grupos auxiliares' }
 		]
 	};
 
@@ -560,12 +551,8 @@ function enviarCreacionGrupo(event) {
 	formData.append("aliasCreadorUString", aliasCreador);
 	formData.append("descripcionGrupo", descripcionGrupo); // Añadir la descripción
 
-
-	// Obtener el contexto de la aplicación (si es necesario)
-	const contextPath = window.location.pathname.split('/')[1];
-
 	// Realizar la solicitud POST usando fetch
-	fetch(`/${contextPath}/CrearGrupoComoAdmin`, {
+	fetch(`/CrearGrupoComoAdmin`, {
 		method: "POST",
 		body: formData
 	})
@@ -659,9 +646,7 @@ function enviarCreacionComentario(event) {
 	formData.append("subCategoriaTipo", subCategoriaComentario);
 	formData.append("idUsuario", idUsuario);
 
-	const contextPath = window.location.pathname.split('/')[1];
-
-	fetch(`/${contextPath}/CrearComentario`, {
+	fetch(`/CrearComentario`, {
 		method: "POST",
 		body: formData
 	})

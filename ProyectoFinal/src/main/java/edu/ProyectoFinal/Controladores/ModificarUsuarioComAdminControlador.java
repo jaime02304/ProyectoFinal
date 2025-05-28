@@ -52,7 +52,7 @@ public class ModificarUsuarioComAdminControlador extends HttpServlet {
 			dto.setAliasUsu(request.getParameter("aliasUsu"));
 			dto.setCorreoElectronicoUsu(request.getParameter("correoElectronicoUsu"));
 			dto.setMovilUsu(Integer.parseInt(request.getParameter("movilUsu")));
-			dto.setEsPremium(Boolean.parseBoolean(request.getParameter("esPremium")));
+			//dto.setEsPremium(Boolean.parseBoolean(request.getParameter("esPremium")));
 			dto.setRolUsu(request.getParameter("rolUsu"));
 			dto.setEsVerificadoEntidad(Boolean.parseBoolean(request.getParameter("esVerificadoEntidad")));
 			String fotoString = request.getParameter("fotoString");

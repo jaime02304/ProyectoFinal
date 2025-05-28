@@ -142,9 +142,7 @@ function enviarCreacionComentario(event) {
 	formData.append("subCategoriaTipo", subCategoriaComentario);
 	formData.append("idUsuario", idUsuario);
 
-	const contextPath = window.location.pathname.split('/')[1];
-
-	fetch(`/${contextPath}/CrearComentario`, {
+	fetch(`/CrearComentario`, {
 		method: "POST",
 		body: formData
 	})

@@ -60,13 +60,6 @@ public class perfilUsuarioControlador extends HttpServlet {
 			request.getRequestDispatcher("error.jsp").forward(request, response);
 			return;
 		}
-		if (!usuario.getEsVerificadoEntidad()) {
-			request.getSession().setAttribute("infoVerificacion",
-					"No se ha detectado un usuario verificado. Debe verificarse antes de continuar.");
-			response.sendRedirect(request.getContextPath() + "/");
-			return;
-		}
-
 		try {
 			Map<String, Object> datos = servicioPerfil.obtenerDatosPerfil(usuario);
 			for (Map.Entry<String, Object> entry : datos.entrySet()) {

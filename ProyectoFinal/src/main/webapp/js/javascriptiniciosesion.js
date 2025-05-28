@@ -72,10 +72,9 @@ function enviarRecuperacion(event) {
 	const params = new URLSearchParams();
 	params.append("correoElectronicoUsu", correo);
 
-	const contextPath = window.location.pathname.split('/')[1];
 	closeRecuperacionModal();
 	mostrarAlertaPersonalizada("Espere un momento a que le llegue el correo para la recuperación de la contraseña.");
-	fetch(`/${contextPath}/RecuperarContrasena`, {
+	fetch(`/RecuperarContrasena`, {
 		method: "POST",
 		headers: { "Content-Type": "application/x-www-form-urlencoded" },
 		body: params.toString()
@@ -128,11 +127,10 @@ function enviarCambioContrasena(event) {
 	formData.append("nuevaContrasena", nuevaContra);
 	formData.append("token", token);
 
-	const contextPath = window.location.pathname.split('/')[1];
 	closeCambioModal();
 	mostrarAlertaPersonalizada("Guardando nueva contraseña...");
 
-	fetch(`/${contextPath}/CambiarContrasena`, {
+	fetch(`/CambiarContrasena`, {
 		method: "POST",
 		body: formData
 	})
