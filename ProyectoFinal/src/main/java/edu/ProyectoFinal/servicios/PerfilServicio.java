@@ -166,7 +166,7 @@ public class PerfilServicio {
 	 * @author jpribio - 06/02/25
 	 * @return
 	 */
-	private Map<String, Object> obtenerUsuariosParaSAdmin() {
+	public Map<String, Object> obtenerUsuariosParaSAdmin() {
 		Map<String, Object> datos = new HashMap<>();
 		String url = RutasGenericas.rutaPrincipalApiString + "api/usuarioSAdminPerfil";
 

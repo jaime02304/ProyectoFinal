@@ -665,6 +665,40 @@ function enviarCreacionComentario(event) {
 		});
 }
 
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+function descargarUsuariosPdf() {
+	const formData = new FormData();
+		formData.append("Hola", "Hola");
+		fetch("/ExportPDFUsu", {
+				method: "POST",
+				body: formData
+			})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`Error al generar el PDF (status ${response.status})`);
+			}
+			return response.blob();
+		})
+		.then(blob => {
+			const downloadUrl = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = downloadUrl;
+			a.download = 'usuarios.pdf';
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			window.URL.revokeObjectURL(downloadUrl);
+		})
+		.catch(error => {
+			console.error('Error al descargar el PDF:', error);
+			alert('Se produjo un error al descargar el PDF.');
+		});
+}
+
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 

@@ -381,6 +381,9 @@
 											<button onclick="openCreacionUsuarioModal()">Crear
 												Usuario</button>
 										</div>
+										<div class="tiposMensaje">
+											<button onclick="descargarUsuariosPdf()">Crear PDF</button>
+										</div>
 									</c:otherwise>
 								</c:choose>
 							</div>
@@ -710,6 +713,9 @@
 									<div class="tiposMensaje">
 										<button onclick="openCreacionUsuarioModal()">Crear
 											Usuario</button>
+									</div>
+									<div class="tiposMensaje">
+										<button onclick="descargarUsuariosPdf()">Crear PDF</button>
 									</div>
 								</c:otherwise>
 							</c:choose>
